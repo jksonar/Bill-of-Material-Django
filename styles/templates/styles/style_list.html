@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Style List</title>
+</head>
+<body>
+    <h1>Style List</h1>
+    <a href="{% url 'styles:style_create' %}">Add New Style</a>
+    <ul>
+        {% for style in styles %}
+            <li>
+                <a href="{% url 'styles:style_detail' style.pk %}">{{ style.name }}</a>
+                (<a href="{% url 'styles:style_update' style.pk %}">Edit</a> |
+                <a href="{% url 'styles:style_delete' style.pk %}">Delete</a>)
+            </li>
+        {% empty %}
+            <li>No styles found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

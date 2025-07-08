@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit BOM Accessory</title>
+</head>
+<body>
+    <h1>Edit BOM Accessory for {{ bomaccessory.order.order_no }} - {{ bomaccessory.accessory.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'orders:order_detail' bomaccessory.order.pk %}">Back to Order Detail</a>
+</body>
+</html>

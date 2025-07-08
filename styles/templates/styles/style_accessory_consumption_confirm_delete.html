@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete Accessory Consumption</title>
+</head>
+<body>
+    <h1>Delete Accessory Consumption</h1>
+    <p>Are you sure you want to delete this accessory consumption entry?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm Delete</button>
+    </form>
+    <a href="{% url 'styles:style_detail' style.pk %}">Cancel</a>
+</body>
+</html>

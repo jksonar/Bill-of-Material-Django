@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Detail</title>
+</head>
+<body>
+    <h1>Order: {{ order.order_no }}</h1>
+    <p>Customer: {{ order.customer }}</p>
+    <p>Style: {{ order.style.name }}</p>
+    <p>Quantity: {{ order.quantity }}</p>
+    <p>Due Date: {{ order.due_date }}</p>
+    <p>Status: {{ order.status }}</p>
+
+    <a href="{% url 'orders:order_update' order.pk %}">Edit Order</a>
+
+    <h2>Fabric BOM</h2>
+    {% if bom_fabrics %}
+        <ul>
+            {% for bom_fabric in bom_fabrics %}
+                <li>
+                    {{ bom_fabric.fabric.name }}: Required - {{ bom_fabric.required_qty }}, Issued - {{ bom_fabric.issued_qty }}, Balance - {{ bom_fabric.balance }}
+                    (<a href="{% url 'orders:bom_fabric_update' bom_fabric.pk %}">Edit</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No fabric BOM for this order.</p>
+    {% endif %}
+
+    <h2>Accessory BOM</h2>
+    {% if bom_accessories %}
+        <ul>
+            {% for bom_accessory in bom_accessories %}
+                <li>
+                    {{ bom_accessory.accessory.name }}: Required - {{ bom_accessory.required_qty }}, Issued - {{ bom_accessory.issued_qty }}, Balance - {{ bom_accessory.balance }}
+                    (<a href="{% url 'orders:bom_accessory_update' bom_accessory.pk %}">Edit</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No accessory BOM for this order.</p>
+    {% endif %}
+
+    <a href="{% url 'orders:order_list' %}">Back to Order List</a>
+</body>
+</html>

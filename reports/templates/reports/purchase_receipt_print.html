@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Purchase Receipt - {{ receipt.grn_no }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header, .footer { text-align: center; margin-bottom: 20px; }
+        .receipt-details, .item-details { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .receipt-details th, .receipt-details td, .item-details th, .item-details td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .receipt-details th, .item-details th { background-color: #f2f2f2; }
+        .total { text-align: right; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PURCHASE RECEIPT</h1>
+        <h2>GRN No: {{ receipt.grn_no }}</h2>
+    </div>
+
+    <table class="receipt-details">
+        <tr>
+            <th>PO Reference:</th>
+            <td>{{ receipt.po_ref.po_no }}</td>
+            <th>Receipt Date:</th>
+            <td>{{ receipt.receipt_date }}</td>
+        </tr>
+        <tr>
+            <th>Supplier:</th>
+            <td>{{ receipt.po_ref.supplier }}</td>
+            <th>Delivery Date (PO):</th>
+            <td>{{ receipt.po_ref.delivery_date }}</td>
+        </tr>
+    </table>
+
+    <h3>Received Items:</h3>
+    <table class="item-details">
+        <thead>
+            <tr>
+                <th>Fabric</th>
+                <th>Quantity Received</th>
+                <th>Damage Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in receipt.items.all %}
+            <tr>
+                <td>{{ item.fabric.name }}</td>
+                <td>{{ item.quantity_received }}</td>
+                <td>{{ item.damage_qty }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="1" class="total">Total Received:</td>
+                <td>{{ receipt.total_received_qty }}</td>
+                <td class="total">Total Ordered:</td>
+                <td>{{ receipt.total_ordered_qty }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="footer">
+        <p>Receipt Status: {% if receipt.is_delayed %}Delayed {% endif %}{% if receipt.is_short %}Short {% endif %}{% if not receipt.is_delayed and not receipt.is_short %}On Time & Full{% endif %}</p>
+    </div>
+</body>
+</html>

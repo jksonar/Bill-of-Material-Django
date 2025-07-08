@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabric Detail</title>
+</head>
+<body>
+    <h1>{{ fabric.name }}</h1>
+    <p>Code: {{ fabric.code }}</p>
+    <p>Type: {{ fabric.type }}</p>
+    <p>GSM: {{ fabric.gsm }}</p>
+    <p>Width: {{ fabric.width }}</p>
+    <p>Supplier: {{ fabric.supplier }}</p>
+    <p>Notes: {{ fabric.notes }}</p>
+    <a href="{% url 'masters:fabric_update' fabric.pk %}">Edit</a>
+    <a href="{% url 'masters:fabric_delete' fabric.pk %}">Delete</a>
+    <a href="{% url 'masters:fabric_list' %}">Back to list</a>
+</body>
+</html>

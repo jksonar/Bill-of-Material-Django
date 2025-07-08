@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabric PO Detail</title>
+</head>
+<body>
+    <h1>Purchase Order: {{ fabric_po.po_no }}</h1>
+    <p>Supplier: {{ fabric_po.supplier }}</p>
+    <p>Date: {{ fabric_po.date }}</p>
+    <p>Delivery Date: {{ fabric_po.delivery_date }}</p>
+    <p>Total Quantity: {{ fabric_po.total_qty }}</p>
+    <p>Status: {{ fabric_po.status }}</p>
+
+    <h2>Items</h2>
+    <a href="{% url 'purchase:fabric_po_item_create' fabric_po.pk %}">Add Item</a>
+    {% if items %}
+        <ul>
+            {% for item in items %}
+                <li>
+                    {{ item.fabric.name }}: {{ item.quantity }} @ {{ item.rate }}
+                    (<a href="{% url 'purchase:fabric_po_item_update' fabric_po.pk item.pk %}">Edit</a> |
+                    <a href="{% url 'purchase:fabric_po_item_delete' fabric_po.pk item.pk %}">Delete</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No items in this PO.</p>
+    {% endif %}
+
+    <a href="{% url 'purchase:fabric_po_list' %}">Back to PO List</a>
+</body>
+</html>

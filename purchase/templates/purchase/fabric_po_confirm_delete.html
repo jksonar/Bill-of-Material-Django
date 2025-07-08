@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete Fabric PO</title>
+</head>
+<body>
+    <h1>Delete Fabric Purchase Order</h1>
+    <p>Are you sure you want to delete PO "{{ fabric_po.po_no }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm Delete</button>
+    </form>
+    <a href="{% url 'purchase:fabric_po_detail' fabric_po.pk %}">Cancel</a>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accessory Detail</title>
+</head>
+<body>
+    <h1>{{ accessory.name }}</h1>
+    <p>Code: {{ accessory.code }}</p>
+    <p>Type: {{ accessory.type }}</p>
+    <p>Supplier: {{ accessory.supplier }}</p>
+    <p>Usage Notes: {{ accessory.usage_notes }}</p>
+    <a href="{% url 'masters:accessory_update' accessory.pk %}">Edit</a>
+    <a href="{% url 'masters:accessory_delete' accessory.pk %}">Delete</a>
+    <a href="{% url 'masters:accessory_list' %}">Back to list</a>
+</body>
+</html>

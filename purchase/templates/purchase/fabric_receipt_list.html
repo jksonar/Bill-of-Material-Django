@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabric Receipt List</title>
+</head>
+<body>
+    <h1>Fabric Receipts</h1>
+    <a href="{% url 'purchase:fabric_receipt_create' %}">Create New Receipt</a>
+
+    <form method="get" action="{% url 'purchase:fabric_receipt_list' %}">
+        Start Date: <input type="date" name="start_date" value="{{ start_date }}">
+        End Date: <input type="date" name="end_date" value="{{ end_date }}">
+        <button type="submit">Filter</button>
+    </form>
+
+    <ul>
+        {% for receipt in fabric_receipts %}
+            <li>
+                <a href="{% url 'purchase:fabric_receipt_detail' receipt.pk %}">{{ receipt.grn_no }} - PO: {{ receipt.po_ref.po_no }} ({{ receipt.receipt_date }})</a>
+                (<a href="{% url 'purchase:fabric_receipt_update' receipt.pk %}">Edit</a> |
+                <a href="{% url 'purchase:fabric_receipt_delete' receipt.pk %}">Delete</a>)
+            </li>
+        {% empty %}
+            <li>No fabric receipts found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

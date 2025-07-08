@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete PO Item</title>
+</head>
+<body>
+    <h1>Delete PO Item</h1>
+    <p>Are you sure you want to delete this PO item?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm Delete</button>
+    </form>
+    <a href="{% url 'purchase:fabric_po_detail' po.pk %}">Cancel</a>
+</body>
+</html>

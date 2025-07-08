@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete Fabric Receipt</title>
+</head>
+<body>
+    <h1>Delete Fabric Receipt</h1>
+    <p>Are you sure you want to delete receipt "{{ fabric_receipt.grn_no }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm Delete</button>
+    </form>
+    <a href="{% url 'purchase:fabric_receipt_detail' fabric_receipt.pk %}">Cancel</a>
+</body>
+</html>

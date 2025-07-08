@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Purchase Order - {{ po.po_no }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header, .footer { text-align: center; margin-bottom: 20px; }
+        .po-details, .item-details { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .po-details th, .po-details td, .item-details th, .item-details td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .po-details th, .item-details th { background-color: #f2f2f2; }
+        .total { text-align: right; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PURCHASE ORDER</h1>
+        <h2>PO No: {{ po.po_no }}</h2>
+    </div>
+
+    <table class="po-details">
+        <tr>
+            <th>Supplier:</th>
+            <td>{{ po.supplier }}</td>
+            <th>Date:</th>
+            <td>{{ po.date }}</td>
+        </tr>
+        <tr>
+            <th>Delivery Date:</th>
+            <td>{{ po.delivery_date }}</td>
+            <th>Status:</th>
+            <td>{{ po.status }}</td>
+        </tr>
+    </table>
+
+    <h3>Items:</h3>
+    <table class="item-details">
+        <thead>
+            <tr>
+                <th>Fabric</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in po.items.all %}
+            <tr>
+                <td>{{ item.fabric.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.rate }}</td>
+                <td>{{ item.quantity|mul:item.rate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="total">Total Quantity:</td>
+                <td>{{ po.total_qty }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="footer">
+        <p>Thank you for your business.</p>
+    </div>
+</body>
+</html>

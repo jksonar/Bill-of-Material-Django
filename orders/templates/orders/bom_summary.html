@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BOM Summary</title>
+</head>
+<body>
+    <h1>BOM Summary</h1>
+
+    <h2>Fabric BOM Summary</h2>
+    {% if all_bom_fabrics %}
+        <ul>
+            {% for bom_fabric in all_bom_fabrics %}
+                <li>Order: {{ bom_fabric.order.order_no }}, Fabric: {{ bom_fabric.fabric.name }}, Required: {{ bom_fabric.required_qty }}, Issued: {{ bom_fabric.issued_qty }}, Balance: {{ bom_fabric.balance }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No fabric BOM entries.</p>
+    {% endif %}
+
+    <h2>Accessory BOM Summary</h2>
+    {% if all_bom_accessories %}
+        <ul>
+            {% for bom_accessory in all_bom_accessories %}
+                <li>Order: {{ bom_accessory.order.order_no }}, Accessory: {{ bom_accessory.accessory.name }}, Required: {{ bom_accessory.required_qty }}, Issued: {{ bom_accessory.issued_qty }}, Balance: {{ bom_accessory.balance }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No accessory BOM entries.</p>
+    {% endif %}
+
+    <a href="{% url 'orders:order_list' %}">Back to Order List</a>
+</body>
+</html>

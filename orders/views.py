@@ -1,3 +1,89 @@
-from django.shortcuts import render
+from django.views.generic import ListView, DetailView, UpdateView, TemplateView, CreateView
+from django.urls import reverse_lazy
+from .models import Order, BOMFabric, BOMAccessory, BOMVersion
+from styles.models import Style
+from django.db.models import Q
 
-# Create your views here.
+class OrderListView(ListView):
+    model = Order
+    template_name = 'orders/order_list.html'
+    context_object_name = 'orders'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status = self.request.GET.get('status')
+        customer = self.request.GET.get('customer')
+        style = self.request.GET.get('style')
+        search_query = self.request.GET.get('q')
+
+        if status:
+            queryset = queryset.filter(status=status)
+        if customer:
+            queryset = queryset.filter(customer__icontains=customer)
+        if style:
+            queryset = queryset.filter(style__name__icontains=style)
+        if search_query:
+            queryset = queryset.filter(
+                Q(order_no__icontains=search_query) |
+                Q(customer__icontains=search_query) |
+                Q(style__name__icontains=search_query)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_statuses'] = Order.STATUS_CHOICES
+        context['selected_status'] = self.request.GET.get('status', '')
+        context['selected_customer'] = self.request.GET.get('customer', '')
+        context['selected_style'] = self.request.GET.get('style', '')
+        context['search_query'] = self.request.GET.get('q', '')
+        return context
+
+class OrderCreateView(CreateView):
+    model = Order
+    template_name = 'orders/order_form.html'
+    fields = ['order_no', 'customer', 'style', 'quantity', 'due_date', 'status']
+    success_url = reverse_lazy('orders:order_list')
+
+class OrderDetailView(DetailView):
+    model = Order
+    template_name = 'orders/order_detail.html'
+    context_object_name = 'order'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bom_fabrics'] = BOMFabric.objects.filter(order=self.object)
+        context['bom_accessories'] = BOMAccessory.objects.filter(order=self.object)
+        return context
+
+class OrderUpdateView(UpdateView):
+    model = Order
+    template_name = 'orders/order_form.html'
+    fields = ['order_no', 'customer', 'style', 'quantity', 'due_date', 'status']
+    success_url = reverse_lazy('orders:order_list')
+
+class BOMFabricUpdateView(UpdateView):
+    model = BOMFabric
+    template_name = 'orders/bom_fabric_form.html'
+    fields = ['issued_qty', 'balance']
+
+    def get_success_url(self):
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk})
+
+class BOMAccessoryUpdateView(UpdateView):
+    model = BOMAccessory
+    template_name = 'orders/bom_accessory_form.html'
+    fields = ['issued_qty', 'balance']
+
+    def get_success_url(self):
+        return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk})
+
+class BOMSummaryView(TemplateView):
+    template_name = 'orders/bom_summary.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_bom_fabrics'] = BOMFabric.objects.all()
+        context['all_bom_accessories'] = BOMAccessory.objects.all()
+        return context

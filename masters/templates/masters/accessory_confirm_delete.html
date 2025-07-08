@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete</title>
+</head>
+<body>
+    <h1>Delete Accessory</h1>
+    <p>Are you sure you want to delete "{{ accessory.name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm Delete</button>
+    </form>
+    <a href="{% url 'masters:accessory_detail' accessory.pk %}">Cancel</a>
+</body>
+</html>

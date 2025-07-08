@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirm Delete Receipt Item</title>
+</head>
+<body>
+    <h1>Delete Receipt Item</h1>
+    <p>Are you sure you want to delete this receipt item?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Confirm Delete</button>
+    </form>
+    <a href="{% url 'purchase:fabric_receipt_detail' receipt.pk %}">Cancel</a>
+</body>
+</html>

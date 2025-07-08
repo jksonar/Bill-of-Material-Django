@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BOM Report</title>
+</head>
+<body>
+    <h1>BOM Report</h1>
+
+    <form method="get" action="{% url 'reports:bom_report' %}">
+        <label for="style">Filter by Style:</label>
+        <select name="style" id="style">
+            <option value="">All Styles</option>
+            {% for style in all_styles %}
+                <option value="{{ style.pk }}" {% if style.pk|stringformat:"s" == selected_style %}selected{% endif %}>{{ style.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="fabric">Filter by Fabric:</label>
+        <select name="fabric" id="fabric">
+            <option value="">All Fabrics</option>
+            {% for fabric in all_fabrics %}
+                <option value="{{ fabric.pk }}" {% if fabric.pk|stringformat:"s" == selected_fabric %}selected{% endif %}>{{ fabric.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="order">Filter by Order:</label>
+        <select name="order" id="order">
+            <option value="">All Orders</option>
+            {% for order in all_orders %}
+                <option value="{{ order.pk }}" {% if order.pk|stringformat:"s" == selected_order %}selected{% endif %}>{{ order.order_no }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="version">Filter by BOM Version:</label>
+        <select name="version" id="version">
+            <option value="">All Versions</option>
+            {% for version in all_versions %}
+                <option value="{{ version.pk }}" {% if version.pk|stringformat:"s" == selected_version %}selected{% endif %}>{{ version.version_number }} ({{ version.created_at|date:"Y-m-d H:i" }})</option>
+            {% endfor %}
+        </select>
+
+        <label for="format">Report Format:</label>
+        <input type="radio" id="detailed" name="format" value="detailed" {% if report_format == 'detailed' %}checked{% endif %}>
+        <label for="detailed">Detailed</label>
+        <input type="radio" id="summary" name="format" value="summary" {% if report_format == 'summary' %}checked{% endif %}>
+        <label for="summary">Summary</label>
+
+        <button type="submit">Filter</button>
+        <button type="submit" name="export_csv" value="true">Export to CSV</button>
+    </form>
+
+    {% if report_format == 'summary' %}
+        {% if summary_bom_entries %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Item Name</th>
+                        <th>Required Quantity</th>
+                        <th>Issued Quantity</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in summary_bom_entries %}
+                        <tr>
+                            <td>{{ entry.type }}</td>
+                            <td>{{ entry.item_name }}</td>
+                            <td>{{ entry.required_qty }}</td>
+                            <td>{{ entry.issued_qty }}</td>
+                            <td>{{ entry.balance }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No summary BOM entries found for the selected filters.</p>
+        {% endif %}
+    {% else %}
+        {% if bom_entries %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Order</th>
+                        <th>Style</th>
+                        <th>Item</th>
+                        <th>Required Quantity</th>
+                        <th>Issued Quantity</th>
+                        <th>Balance</th>
+                        <th>BOM Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in bom_entries %}
+                        <tr>
+                            <td>{{ entry.type }}</td>
+                            <td>{{ entry.order.order_no }}</td>
+                            <td>{{ entry.style.name }}</td>
+                            <td>{{ entry.item.name }}</td>
+                            <td>{{ entry.required_qty }}</td>
+                            <td>{{ entry.issued_qty }}</td>
+                            <td>{{ entry.balance }}</td>
+                            <td>{{ entry.version.version_number }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No BOM entries found for the selected filters.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>

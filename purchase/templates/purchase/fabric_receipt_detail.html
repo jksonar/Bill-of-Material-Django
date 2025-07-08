@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabric Receipt Detail</title>
+</head>
+<body>
+    <h1>Fabric Receipt: {{ fabric_receipt.grn_no }}</h1>
+    <p>PO Reference: {{ fabric_receipt.po_ref.po_no }}</p>
+    <p>Receipt Date: {{ fabric_receipt.receipt_date }}</p>
+
+    <h2>Items</h2>
+    <a href="{% url 'purchase:fabric_receipt_item_create' fabric_receipt.pk %}">Add Item</a>
+    {% if items %}
+        <ul>
+            {% for item in items %}
+                <li>
+                    {{ item.fabric.name }}: Received - {{ item.quantity_received }}, Damaged - {{ item.damage_qty }}
+                    (<a href="{% url 'purchase:fabric_receipt_item_update' fabric_receipt.pk item.pk %}">Edit</a> |
+                    <a href="{% url 'purchase:fabric_receipt_item_delete' fabric_receipt.pk item.pk %}">Delete</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No items in this receipt.</p>
+    {% endif %}
+
+    <a href="{% url 'purchase:fabric_receipt_list' %}">Back to Receipt List</a>
+</body>
+</html>

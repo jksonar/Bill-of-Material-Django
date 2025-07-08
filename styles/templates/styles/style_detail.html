@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Style Detail</title>
+</head>
+<body>
+    <h1>{{ style.name }} ({{ style.code }})</h1>
+    <p>Category: {{ style.category }}</p>
+    {% if style.image %}
+        <img src="{{ style.image.url }}" alt="{{ style.name }}" width="200">
+    {% endif %}
+    <a href="{% url 'styles:style_update' style.pk %}">Edit</a>
+    <a href="{% url 'styles:style_delete' style.pk %}">Delete</a>
+    <a href="{% url 'styles:style_list' %}">Back to list</a>
+
+    <h2>Fabric Consumption</h2>
+    <a href="{% url 'styles:style_fabric_consumption_create' style.pk %}">Add Fabric Consumption</a>
+    {% if style.stylefabricconsumption_set.all %}
+        <ul>
+            {% for consumption in style.stylefabricconsumption_set.all %}
+                <li>
+                    {{ consumption.fabric.name }}: {{ consumption.quantity }} {{ consumption.unit }} (Unit Price: {{ consumption.fabric.unit_price }} | Cost: {{ consumption.quantity|mul:consumption.fabric.unit_price }})
+                    (<a href="{% url 'styles:style_fabric_consumption_update' style.pk consumption.pk %}">Edit</a> |
+                    <a href="{% url 'styles:style_fabric_consumption_delete' style.pk consumption.pk %}">Delete</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No fabric consumption defined for this style.</p>
+    {% endif %}
+
+    <h2>Accessory Consumption</h2>
+    <a href="{% url 'styles:style_accessory_consumption_create' style.pk %}">Add Accessory Consumption</a>
+    {% if style.styleaccessoryconsumption_set.all %}
+        <ul>
+            {% for consumption in style.styleaccessoryconsumption_set.all %}
+                <li>
+                    {{ consumption.accessory.name }}: {{ consumption.quantity }} {{ consumption.unit }} (Unit Price: {{ consumption.accessory.unit_price }} | Cost: {{ consumption.quantity|mul:consumption.accessory.unit_price }})
+                    (<a href="{% url 'styles:style_accessory_consumption_update' style.pk consumption.pk %}">Edit</a> |
+                    <a href="{% url 'styles:style_accessory_consumption_delete' style.pk consumption.pk %}">Delete</a>)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No accessory consumption defined for this style.</p>
+    {% endif %}
+
+    <h2>Costing Summary</h2>
+    {% if style.stylecosting %}
+        <p>Total Fabric Cost: {{ style.stylecosting.total_fabric_cost }}</p>
+        <p>Total Accessory Cost: {{ style.stylecosting.total_accessory_cost }}</p>
+        <p>Total Cost: {{ style.stylecosting.total_cost }}</p>
+        <p>Margin/Markup: {{ style.stylecosting.margin_markup }}%</p>
+    {% else %}
+        <p>Costing not yet calculated for this style.</p>
+    {% endif %}
+</body>
+</html>

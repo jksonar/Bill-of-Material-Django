@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BOM Diff Report</title>
+</head>
+<body>
+    <h1>BOM Diff Report</h1>
+
+    <form method="get" action="{% url 'reports:bom_diff' %}">
+        <label for="order">Select Order:</label>
+        <select name="order" id="order" onchange="this.form.submit()">
+            <option value="">-- Select an Order --</option>
+            {% for order in all_orders %}
+                <option value="{{ order.pk }}" {% if order.pk|stringformat:"s" == selected_order %}selected{% endif %}>{{ order.order_no }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="version1">Compare Version:</label>
+        <select name="version1" id="version1">
+            <option value="">-- Select Version 1 --</option>
+            {% for version in all_versions %}
+                <option value="{{ version.pk }}" {% if version.pk|stringformat:"s" == selected_version1 %}selected{% endif %}>{{ version.version_number }} ({{ version.created_at|date:"Y-m-d H:i" }})</option>
+            {% endfor %}
+        </select>
+
+        <label for="version2">With Version:</label>
+        <select name="version2" id="version2">
+            <option value="">-- Select Version 2 --</option>
+            {% for version in all_versions %}
+                <option value="{{ version.pk }}" {% if version.pk|stringformat:"s" == selected_version2 %}selected{% endif %}>{{ version.version_number }} ({{ version.created_at|date:"Y-m-d H:i" }})</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Compare</button>
+    </form>
+
+    {% if diff_results %}
+        <h2>Differences between BOM Version {{ version1_obj.version_number }} and {{ version2_obj.version_number }} for Order {{ version1_obj.order.order_no }}</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Item Name</th>
+                    <th>Version {{ version1_obj.version_number }} Quantity</th>
+                    <th>Version {{ version2_obj.version_number }} Quantity</th>
+                    <th>Change</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for diff in diff_results %}
+                    <tr>
+                        <td>{{ diff.type }}</td>
+                        <td>{{ diff.item_name }}</td>
+                        <td>{{ diff.version1_qty }}</td>
+                        <td>{{ diff.version2_qty }}</td>
+                        <td>{{ diff.change }}</td>
+                        <td>{{ diff.status|default:"Changed" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif selected_version1 and selected_version2 %}
+        <p>No differences found between the selected BOM versions.</p>
+    {% endif %}
+</body>
+</html>

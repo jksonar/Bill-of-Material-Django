@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fabric PO List</title>
+</head>
+<body>
+    <h1>Fabric Purchase Orders</h1>
+    <a href="{% url 'purchase:fabric_po_create' %}">Create New PO</a>
+
+    <form method="get" action="{% url 'purchase:fabric_po_list' %}">
+        <label for="status">Filter by Status:</label>
+        <select name="status" id="status">
+            <option value="">All</option>
+            {% for status_value, status_label in all_statuses %}
+                <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <ul>
+        {% for po in fabric_pos %}
+            <li>
+                <a href="{% url 'purchase:fabric_po_detail' po.pk %}">{{ po.po_no }} - {{ po.supplier }} ({{ po.status }})</a>
+                (<a href="{% url 'purchase:fabric_po_update' po.pk %}">Edit</a> |
+                <a href="{% url 'purchase:fabric_po_delete' po.pk %}">Delete</a>)
+            </li>
+        {% empty %}
+            <li>No fabric purchase orders found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

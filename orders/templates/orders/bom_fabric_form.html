@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit BOM Fabric</title>
+</head>
+<body>
+    <h1>Edit BOM Fabric for {{ bomfabric.order.order_no }} - {{ bomfabric.fabric.name }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'orders:order_detail' bomfabric.order.pk %}">Back to Order Detail</a>
+</body>
+</html>

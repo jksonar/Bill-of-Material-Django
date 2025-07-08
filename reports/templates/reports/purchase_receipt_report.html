@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Purchase Receipt Report</title>
+    <style>
+        .delayed { background-color: #ffdddd; }
+        .short { background-color: #ffffcc; }
+    </style>
+</head>
+<body>
+    <h1>Purchase Receipt Report</h1>
+
+    <form method="get" action="{% url 'reports:purchase_receipt_report' %}">
+        Start Date: <input type="date" name="start_date" value="{{ start_date }}">
+        End Date: <input type="date" name="end_date" value="{{ end_date }}">
+        <br>
+        <label for="format">Report Format:</label>
+        <input type="radio" id="detailed" name="format" value="detailed" {% if report_format == 'detailed' %}checked{% endif %}>
+        <label for="detailed">Detailed</label>
+        <input type="radio" id="summary" name="format" value="summary" {% if report_format == 'summary' %}checked{% endif %}>
+        <label for="summary">Summary</label>
+        <button type="submit">Filter</button>
+        <button type="submit" name="export_csv" value="true">Export to CSV</button>
+    </form>
+
+    {% if report_format == 'summary' %}
+        {% if summary_receipt_entries %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Supplier</th>
+                        <th>Fabric Name</th>
+                        <th>Ordered Quantity</th>
+                        <th>Received Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in summary_receipt_entries %}
+                        <tr>
+                            <td>{{ entry.supplier }}</td>
+                            <td>{{ entry.fabric_name }}</td>
+                            <td>{{ entry.ordered_qty }}</td>
+                            <td>{{ entry.received_qty }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No summary receipts found for the selected filters.</p>
+        {% endif %}
+    {% else %}
+        {% if purchase_receipts %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>GRN No</th>
+                        <th>PO Reference</th>
+                        <th>Receipt Date</th>
+                        <th>Ordered Quantity</th>
+                        <th>Received Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for receipt in purchase_receipts %}
+                        <tr class="{% if receipt.is_delayed %}delayed{% endif %} {% if receipt.is_short %}short{% endif %}">
+                            <td>{{ receipt.grn_no }}</td>
+                            <td>{{ receipt.po_ref.po_no }}</td>
+                            <td>{{ receipt.receipt_date }}</td>
+                            <td>{{ receipt.total_ordered_qty }}</td>
+                            <td>{{ receipt.total_received_qty }}</td>
+                            <td>
+                                {% if receipt.is_delayed %}Delayed {% endif %}
+                                {% if receipt.is_short %}Short {% endif %}
+                                {% if not receipt.is_delayed and not receipt.is_short %}On Time & Full{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No purchase receipts found for the selected filters.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
