@@ -122,4 +122,3 @@ class AccessoryDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'masters/accessory_confirm_delete.html'
     success_url = reverse_lazy('masters:accessory_list')
     permission_required = 'masters.delete_accessory'
-)

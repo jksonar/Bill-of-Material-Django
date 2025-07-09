@@ -54,5 +54,18 @@
     {% else %}
         <p>Costing not yet calculated for this style.</p>
     {% endif %}
+
+    <h2>Associated Styles</h2>
+    {% if style.associated_styles.all %}
+        <ul>
+            {% for associated_style in style.associated_styles.all %}
+                <li>
+                    <a href="{% url 'styles:style_detail' associated_style.pk %}">{{ associated_style.name }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No associated styles.</p>
+    {% endif %}
 </body>
 </html>

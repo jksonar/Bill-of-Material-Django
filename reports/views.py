@@ -12,6 +12,7 @@ from itertools import chain
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from io import BytesIO
+import openpyxl
 
 class BOMReportView(ListView):
     template_name = 'reports/bom_report.html'
@@ -134,6 +135,46 @@ class BOMReportView(ListView):
                         entry.balance,
                         entry.version.version_number if entry.version else '',
                     ])
+            return response
+        elif 'export_excel' in request.GET:
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="bom_report.xlsx"'
+
+            workbook = openpyxl.Workbook()
+            worksheet = workbook.active
+            worksheet.title = "BOM Report"
+
+            report_format = request.GET.get('format', 'detailed')
+
+            if report_format == 'summary':
+                worksheet.append(['Type', 'Item Name', 'Required Quantity', 'Issued Quantity', 'Balance'])
+                context = self.get_context_data()
+                for entry in context['summary_bom_entries']:
+                    worksheet.append([
+                        entry['type'],
+                        entry['item_name'],
+                        entry['required_qty'],
+                        entry['issued_qty'],
+                        entry['balance'],
+                    ])
+            else:
+                worksheet.append(['Type', 'Order No', 'Style Name', 'Item Name', 'Required Quantity', 'Issued Quantity', 'Balance', 'BOM Version'])
+                queryset = self.get_queryset()
+                for entry in queryset:
+                    item_name = entry.fabric.name if isinstance(entry, BOMFabric) else entry.accessory.name
+                    item_type = 'Fabric' if isinstance(entry, BOMFabric) else 'Accessory'
+                    worksheet.append([
+                        item_type,
+                        entry.order.order_no,
+                        entry.order.style.name,
+                        item_name,
+                        entry.required_qty,
+                        entry.issued_qty,
+                        entry.balance,
+                        entry.version.version_number if entry.version else '',
+                    ])
+            
+            workbook.save(response)
             return response
         return super().get(request, *args, **kwargs)
 
@@ -366,6 +407,41 @@ class PurchaseReceiptReportView(ListView):
                         receipt.total_received_qty,
                         ('Delayed ' if receipt.is_delayed else '') + ('Short ' if receipt.is_short else '') + ('On Time & Full' if not receipt.is_delayed and not receipt.is_short else ''),
                     ])
+            return response
+        elif 'export_excel' in request.GET:
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="purchase_receipt_report.xlsx"'
+
+            workbook = openpyxl.Workbook()
+            worksheet = workbook.active
+            worksheet.title = "Purchase Receipt Report"
+
+            report_format = request.GET.get('format', 'detailed')
+
+            if report_format == 'summary':
+                worksheet.append(['Supplier', 'Fabric Name', 'Ordered Quantity', 'Received Quantity'])
+                context = self.get_context_data()
+                for entry in context['summary_receipt_entries']:
+                    worksheet.append([
+                        entry['supplier'],
+                        entry['fabric_name'],
+                        entry['ordered_qty'],
+                        entry['received_qty'],
+                    ])
+            else:
+                worksheet.append(['GRN No', 'PO Reference', 'Receipt Date', 'Ordered Quantity', 'Received Quantity', 'Status'])
+                queryset = self.get_queryset()
+                for receipt in queryset:
+                    worksheet.append([
+                        receipt.grn_no,
+                        receipt.po_ref.po_no,
+                        receipt.receipt_date,
+                        receipt.total_ordered_qty,
+                        receipt.total_received_qty,
+                        ('Delayed ' if receipt.is_delayed else '') + ('Short ' if receipt.is_short else '') + ('On Time & Full' if not receipt.is_delayed and not receipt.is_short else ''),
+                    ])
+            
+            workbook.save(response)
             return response
         elif 'print_receipt' in request.GET:
             receipt_id = request.GET.get('receipt_id')

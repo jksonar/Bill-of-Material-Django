@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Style, StyleFabricConsumption, StyleAccessoryConsumption, StyleCosting, Size, StyleVariant, Currency
+from guardian.admin import GuardedModelAdmin
 
 class StyleFabricConsumptionInline(admin.TabularInline):
     model = StyleFabricConsumption
@@ -16,11 +17,12 @@ class StyleVariantInline(admin.TabularInline):
     extra = 1
 
 @admin.register(Style)
-class StyleAdmin(admin.ModelAdmin):
+class StyleAdmin(GuardedModelAdmin):
     list_display = ('code', 'name', 'category', 'image')
     search_fields = ('code', 'name', 'category')
     list_filter = ('category',)
     inlines = [StyleVariantInline, StyleFabricConsumptionInline, StyleAccessoryConsumptionInline]
+    filter_horizontal = ('associated_styles',)
 
 @admin.register(StyleCosting)
 class StyleCostingAdmin(admin.ModelAdmin):

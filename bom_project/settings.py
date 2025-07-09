@@ -43,7 +43,13 @@ INSTALLED_APPS = [
     'orders',
     'purchase',
     'reports',
+    'guardian',
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

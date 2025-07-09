@@ -71,7 +71,7 @@ Track how much fabric and accessories each style consumes.
 * [x] Model: StyleFabricConsumption (style, fabric, quantity, unit)
 * [x] Model: StyleAccessoryConsumption (style, accessory, quantity, unit)
 * [x] Views to link fabric/accessories to style
-* [ ] Import/export functionality (optional)
+* [x] Import/export functionality (optional)
 
 ---
 
@@ -87,7 +87,7 @@ Calculate the total cost per style using consumption and rates.
 * [x] Model: StyleCosting (linked to Style)
 * [x] Display breakdown by item
 * [x] Allow margin/markup configuration
-* [ ] Generate costing report (PDF/HTML)
+* [x] Generate costing report (PDF/HTML)
 
 ---
 
@@ -202,7 +202,7 @@ Track goods received against POs.
 
 * [x] Use Django auth for login/logout
 * [x] Role-based access via Django Groups
-* [ ] Optional: Django Guardian for object-level permissions
+* [x] Optional: Django Guardian for object-level permissions
 
 ---
 
@@ -216,7 +216,7 @@ Track goods received against POs.
   - `purchase`: for PO and receipts
   * [x] `reports`: custom reports
 * [x] Admin Panel customization
-* [ ] Sample dataset for testing
+* [x] Sample dataset for testing
 
 ---
 

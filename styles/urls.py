@@ -1,7 +1,5 @@
 from django.urls import path
-from .views import StyleListView, StyleCreateView, StyleDetailView, StyleUpdateView, StyleDeleteView, \
-    StyleFabricConsumptionCreateView, StyleFabricConsumptionUpdateView, StyleFabricConsumptionDeleteView, \
-    StyleAccessoryConsumptionCreateView, StyleAccessoryConsumptionUpdateView, StyleAccessoryConsumptionDeleteView
+from .views import StyleListView, StyleCreateView, StyleDetailView, StyleUpdateView, StyleDeleteView,     StyleFabricConsumptionCreateView, StyleFabricConsumptionUpdateView, StyleFabricConsumptionDeleteView,     StyleAccessoryConsumptionCreateView, StyleAccessoryConsumptionUpdateView, StyleAccessoryConsumptionDeleteView,     ExportConsumptionView, ImportConsumptionView
 
 app_name = 'styles'
 
@@ -19,4 +17,6 @@ urlpatterns = [
     path('styles/<int:style_pk>/accessory-consumption/add/', StyleAccessoryConsumptionCreateView.as_view(), name='style_accessory_consumption_create'),
     path('styles/<int:style_pk>/accessory-consumption/<int:pk>/edit/', StyleAccessoryConsumptionUpdateView.as_view(), name='style_accessory_consumption_update'),
     path('styles/<int:style_pk>/accessory-consumption/<int:pk>/delete/', StyleAccessoryConsumptionDeleteView.as_view(), name='style_accessory_consumption_delete'),
+    path('styles/export-consumption/', ExportConsumptionView.as_view(), name='export_consumption'),
+    path('styles/import-consumption/', ImportConsumptionView.as_view(), name='import_consumption'),
 ]
