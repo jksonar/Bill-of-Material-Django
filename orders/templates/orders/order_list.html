@@ -5,14 +5,73 @@
 </head>
 <body>
     <h1>Order List</h1>
-    <ul>
-        {% for order in orders %}
-            <li>
-                <a href="{% url 'orders:order_detail' order.pk %}">{{ order.order_no }} - {{ order.customer }} ({{ order.style.name }})</a>
-            </li>
-        {% empty %}
-            <li>No orders found.</li>
-        {% endfor %}
-    </ul>
+
+    <form method="get" action="{% url 'orders:order_list' %}">
+        <input type="text" name="q" placeholder="Search by Order No, Customer, Style" value="{{ search_query }}">
+        <select name="status">
+            <option value="">All Statuses</option>
+            {% for status_value, status_label in all_statuses %}
+                <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="customer" placeholder="Filter by Customer" value="{{ selected_customer }}">
+        <input type="text" name="style" placeholder="Filter by Style" value="{{ selected_style }}">
+        <button type="submit">Filter</button>
+    </form>
+
+    <p><a href="{% url 'orders:order_create' %}">Create New Order</a></p>
+
+    {% if orders %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Order No</th>
+                    <th>Customer</th>
+                    <th>Style</th>
+                    <th>Quantity</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.order_no }}</td>
+                        <td>{{ order.customer }}</td>
+                        <td>{{ order.style.name }}</td>
+                        <td>{{ order.quantity }}</td>
+                        <td>{{ order.due_date }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>
+                            <a href="{% url 'orders:order_detail' order.pk %}">View</a> |
+                            <a href="{% url 'orders:order_update' order.pk %}">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">&laquo; first</a>
+                    <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">next</a>
+                    <a href="?page={{ page_obj.num_pages }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+
+    {% else %}
+        <p>No orders found.</p>
+    {% endif %}
 </body>
 </html>

@@ -39,7 +39,7 @@ Maintain the list of fabrics used in styles.
 
 #### Tasks:
 
-* [ ] Model: Fabric (name, code, type, GSM, width, supplier, etc.)
+* [x] Model: Fabric (name, code, type, GSM, width, supplier, etc.)
 * [x] CRUD operations via Django Admin or views
 * [x] Search & filter functionality
 
@@ -53,7 +53,7 @@ Maintain the list of accessories/trims.
 
 #### Tasks:
 
-* [ ] Model: Accessories (name, code, type, supplier, usage notes)
+* [x] Model: Accessories (name, code, type, supplier, usage notes)
 * [x] CRUD operations
 * [x] Filter by category/type
 
@@ -67,9 +67,9 @@ Track how much fabric and accessories each style consumes.
 
 #### Tasks:
 
-* [ ] Model: Style (code, name, category, image)
-* [ ] Model: StyleFabricConsumption (style, fabric, quantity, unit)
-* [ ] Model: StyleAccessoryConsumption (style, accessory, quantity, unit)
+* [x] Model: Style (code, name, category, image)
+* [x] Model: StyleFabricConsumption (style, fabric, quantity, unit)
+* [x] Model: StyleAccessoryConsumption (style, accessory, quantity, unit)
 * [x] Views to link fabric/accessories to style
 * [ ] Import/export functionality (optional)
 
@@ -84,7 +84,7 @@ Calculate the total cost per style using consumption and rates.
 #### Tasks:
 
 * [x] Auto-calculate cost: quantity x unit price
-* [ ] Model: StyleCosting (linked to Style)
+* [x] Model: StyleCosting (linked to Style)
 * [x] Display breakdown by item
 * [x] Allow margin/markup configuration
 * [ ] Generate costing report (PDF/HTML)
@@ -99,7 +99,7 @@ Log orders received for specific styles.
 
 #### Tasks:
 
-* [ ] Model: Order (order\_no, customer, style, quantity, due\_date, status)
+* [x] Model: Order (order\_no, customer, style, quantity, due\_date, status)
 * [x] Auto-calculate required fabric & accessories
 * [x] View: Order list and detail page
 * [x] Status management (Pending, In Progress, Delivered)
@@ -114,9 +114,9 @@ Maintain fabric BOM entries linked to each order or style.
 
 #### Tasks:
 
-* [ ] Model: BOMFabric (order/style, fabric, required\_qty, issued\_qty, balance)
-* [ ] Auto-populate based on order and consumption
-* [ ] Allow manual adjustment
+* [x] Model: BOMFabric (order/style, fabric, required\_qty, issued\_qty, balance)
+* [x] Auto-populate based on order and consumption
+* [x] Allow manual adjustment
 * [x] Summary report view
 
 ---
@@ -129,9 +129,9 @@ Same as fabric BOM but for trims.
 
 #### Tasks:
 
-* [ ] Model: BOMAccessory (order/style, accessory, required\_qty, issued\_qty, balance)
+* [x] Model: BOMAccessory (order/style, accessory, required\_qty, issued\_qty, balance)
 * [x] Entry view and inline edit
-* [ ] BOM report with filters
+* [x] BOM report with filters
 
 ---
 
@@ -143,8 +143,8 @@ Create purchase orders for required fabrics.
 
 #### Tasks:
 
-* [ ] Model: FabricPO (po\_no, supplier, date, delivery\_date, total\_qty, status)
-* [ ] Model: FabricPOItem (fabric, quantity, rate)
+* [x] Model: FabricPO (po\_no, supplier, date, delivery\_date, total\_qty, status)
+* [x] Model: FabricPOItem (fabric, quantity, rate)
 * [x] Generate printable PO
 * [x] Filter by status (Open, Received, Cancelled)
 
@@ -158,8 +158,8 @@ Track goods received against POs.
 
 #### Tasks:
 
-* [ ] Model: FabricReceipt (po\_ref, receipt\_date, GRN no)
-* [ ] Model: FabricReceiptItem (fabric, quantity received, damage\_qty)
+* [x] Model: FabricReceipt (po\_ref, receipt\_date, GRN no)
+* [x] Model: FabricReceiptItem (fabric, quantity received, damage\_qty)
 * [x] Update inventory balance
 * [x] Report view
 
@@ -200,9 +200,9 @@ Track goods received against POs.
 
 ## 🔐 Authentication & Authorization
 
-* Use Django auth for login/logout
-* Role-based access via Django Groups
-* Optional: Django Guardian for object-level permissions
+* [x] Use Django auth for login/logout
+* [x] Role-based access via Django Groups
+* [ ] Optional: Django Guardian for object-level permissions
 
 ---
 
@@ -213,10 +213,10 @@ Track goods received against POs.
   * `masters`: for fabric and accessory masters
   * `styles`: for style and consumption
   * `orders`: for order entry and BOMs
-  * `purchase`: for PO and receipts
+  - `purchase`: for PO and receipts
   * [x] `reports`: custom reports
-* Admin Panel customization
-* Sample dataset for testing
+* [x] Admin Panel customization
+* [ ] Sample dataset for testing
 
 ---
 
@@ -243,10 +243,10 @@ bom_project/
 
 ## 🛠️ Future Enhancements
 
-* Email/SMS alerts for low stock or delivery deadlines
-* Barcode/QR code support for fabric rolls
-* Multi-location warehouse inventory
-* Dashboard with KPIs (total cost, delayed POs, etc.)
-* Frontend with React/Next.js or HTMX if needed
+* [ ] Email/SMS alerts for low stock or delivery deadlines
+* [ ] Barcode/QR code support for fabric rolls
+* [ ] Multi-location warehouse inventory
+* [ ] Dashboard with KPIs (total cost, delayed POs, etc.)
+* [ ] Frontend with React/Next.js or HTMX if needed
 
 ---

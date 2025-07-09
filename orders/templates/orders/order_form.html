@@ -1,15 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Order Form</title>
+    <title>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Order</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        form div { margin-bottom: 10px; }
+        label { display: inline-block; width: 120px; }
+        input[type="text"], input[type="number"], input[type="date"], select { width: 200px; padding: 5px; }
+        button { padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
 </head>
 <body>
-    <h1>{% if form.instance.pk %}Edit{% else %}Add{% endif %} Order</h1>
+    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Order</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div>
+            <label for="{{ form.order_no.id_for_label }}">Order No:</label>
+            {{ form.order_no }}
+        </div>
+        <div>
+            <label for="{{ form.customer.id_for_label }}">Customer:</label>
+            {{ form.customer }}
+        </div>
+        <div>
+            <label for="{{ form.style.id_for_label }}">Style:</label>
+            {{ form.style }}
+        </div>
+        <div>
+            <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
+            {{ form.quantity }}
+        </div>
+        <div>
+            <label for="{{ form.due_date.id_for_label }}">Due Date:</label>
+            {{ form.due_date }}
+        </div>
+        <div>
+            <label for="{{ form.status.id_for_label }}">Status:</label>
+            {{ form.status }}
+        </div>
         <button type="submit">Save</button>
     </form>
-    <a href="{% url 'orders:order_list' %}">Back to list</a>
+    <p><a href="{% url 'orders:order_list' %}">Back to Order List</a></p>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from django.views.generic import ListView, View
 from orders.models import BOMFabric, BOMAccessory, Order, BOMVersion
-from styles.models import Style
+from styles.models import Style, StyleCosting
 from masters.models import Fabric, Accessory
 from purchase.models import FabricPO, FabricReceiptItem, FabricReceipt, FabricPOItem
 from django.db.models import Q, Sum
@@ -8,57 +8,42 @@ from django.http import HttpResponse
 import csv
 from collections import defaultdict
 from django.shortcuts import render
+from itertools import chain
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from io import BytesIO
 
 class BOMReportView(ListView):
     template_name = 'reports/bom_report.html'
     context_object_name = 'bom_entries'
 
     def get_queryset(self):
-        queryset = []
         style_id = self.request.GET.get('style')
         fabric_id = self.request.GET.get('fabric')
         order_id = self.request.GET.get('order')
         version_id = self.request.GET.get('version')
 
-        fabric_bom_queryset = BOMFabric.objects.all()
-        accessory_bom_queryset = BOMAccessory.objects.all()
+        fabric_bom = BOMFabric.objects.select_related('order', 'order__style', 'fabric', 'version').all()
+        accessory_bom = BOMAccessory.objects.select_related('order', 'order__style', 'accessory', 'version').all()
 
         if style_id:
-            fabric_bom_queryset = fabric_bom_queryset.filter(order__style__id=style_id)
-            accessory_bom_queryset = accessory_bom_queryset.filter(order__style__id=style_id)
+            fabric_bom = fabric_bom.filter(order__style__id=style_id)
+            accessory_bom = accessory_bom.filter(order__style__id=style_id)
         if fabric_id:
-            fabric_bom_queryset = fabric_bom_queryset.filter(fabric__id=fabric_id)
+            fabric_bom = fabric_bom.filter(fabric__id=fabric_id)
         if order_id:
-            fabric_bom_queryset = fabric_bom_queryset.filter(order__id=order_id)
-            accessory_bom_queryset = accessory_bom_queryset.filter(order__id=order_id)
+            fabric_bom = fabric_bom.filter(order__id=order_id)
+            accessory_bom = accessory_bom.filter(order__id=order_id)
         if version_id:
-            fabric_bom_queryset = fabric_bom_queryset.filter(version__id=version_id)
-            accessory_bom_queryset = accessory_bom_queryset.filter(version__id=version_id)
+            fabric_bom = fabric_bom.filter(version__id=version_id)
+            accessory_bom = accessory_bom.filter(version__id=version_id)
 
-        for entry in fabric_bom_queryset:
-            queryset.append({
-                'type': 'Fabric',
-                'order': entry.order,
-                'style': entry.order.style,
-                'item': entry.fabric,
-                'required_qty': entry.required_qty,
-                'issued_qty': entry.issued_qty,
-                'balance': entry.balance,
-                'version': entry.version,
-            })
-
-        for entry in accessory_bom_queryset:
-            queryset.append({
-                'type': 'Accessory',
-                'order': entry.order,
-                'style': entry.order.style,
-                'item': entry.accessory,
-                'required_qty': entry.required_qty,
-                'issued_qty': entry.issued_qty,
-                'balance': entry.balance,
-                'version': entry.version,
-            })
-        return queryset
+        # Combine and sort the querysets
+        bom_entries = sorted(
+            chain(fabric_bom, accessory_bom),
+            key=lambda x: x.order.order_no
+        )
+        return bom_entries
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -74,14 +59,16 @@ class BOMReportView(ListView):
 
         if context['report_format'] == 'summary':
             summary_data = defaultdict(lambda: {'required_qty': 0, 'issued_qty': 0, 'balance': 0})
-            for entry in context['bom_entries']:
-                item_key = (entry['type'], entry['item'].pk, entry['item'].name)
-                summary_data[item_key]['required_qty'] += entry['required_qty']
-                summary_data[item_key]['issued_qty'] += entry['issued_qty']
-                summary_data[item_key]['balance'] += entry['balance']
+            for entry in self.get_queryset():
+                item_name = entry.fabric.name if isinstance(entry, BOMFabric) else entry.accessory.name
+                item_type = 'Fabric' if isinstance(entry, BOMFabric) else 'Accessory'
+                item_key = (item_type, item_name)
+                summary_data[item_key]['required_qty'] += entry.required_qty
+                summary_data[item_key]['issued_qty'] += entry.issued_qty
+                summary_data[item_key]['balance'] += entry.balance
             context['summary_bom_entries'] = [{
                 'type': k[0],
-                'item_name': k[2],
+                'item_name': k[1],
                 'required_qty': v['required_qty'],
                 'issued_qty': v['issued_qty'],
                 'balance': v['balance'],
@@ -89,7 +76,30 @@ class BOMReportView(ListView):
 
         return context
 
+    def render_to_pdf(self, template_src, context_dict={}):
+        template = get_template(template_src)
+        html = template.render(context_dict)
+        result = BytesIO()
+        pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type='application/pdf')
+        return None
+
     def get(self, request, *args, **kwargs):
+        if 'export_pdf' in request.GET:
+            queryset = self.get_queryset()
+            context = {
+                'bom_entries': queryset,
+            }
+            pdf = self.render_to_pdf('reports/bom_report_pdf.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "BOM_Report.pdf"
+                content = "attachment; filename='%s'" %(filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
+
         if 'export_csv' in request.GET:
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="bom_report.csv"'
@@ -112,18 +122,21 @@ class BOMReportView(ListView):
                 writer.writerow(['Type', 'Order No', 'Style Name', 'Item Name', 'Required Quantity', 'Issued Quantity', 'Balance', 'BOM Version'])
                 queryset = self.get_queryset()
                 for entry in queryset:
+                    item_name = entry.fabric.name if isinstance(entry, BOMFabric) else entry.accessory.name
+                    item_type = 'Fabric' if isinstance(entry, BOMFabric) else 'Accessory'
                     writer.writerow([
-                        entry['type'],
-                        entry['order'].order_no,
-                        entry['style'].name,
-                        entry['item'].name,
-                        entry['required_qty'],
-                        entry['issued_qty'],
-                        entry['balance'],
-                        entry['version'].version_number if entry['version'] else '',
+                        item_type,
+                        entry.order.order_no,
+                        entry.order.style.name,
+                        item_name,
+                        entry.required_qty,
+                        entry.issued_qty,
+                        entry.balance,
+                        entry.version.version_number if entry.version else '',
                     ])
             return response
         return super().get(request, *args, **kwargs)
+
 
 class BOMDiffView(View):
     template_name = 'reports/bom_diff.html'
@@ -361,4 +374,75 @@ class PurchaseReceiptReportView(ListView):
                 if receipt:
                     return render(request, 'reports/purchase_receipt_print.html', {'receipt': receipt})
             return super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
+
+class StyleCostingReportView(ListView):
+    model = StyleCosting
+    template_name = 'reports/style_costing_report.html'
+    context_object_name = 'style_costings'
+
+    def render_to_pdf(self, template_src, context_dict={}):
+        template = get_template(template_src)
+        html = template.render(context_dict)
+        result = BytesIO()
+        pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+        if not pdf.err:
+            return HttpResponse(result.getvalue(), content_type='application/pdf')
+        return None
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        style_id = self.request.GET.get('style')
+        if style_id:
+            queryset = queryset.filter(style__id=style_id)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_styles'] = Style.objects.all()
+        context['selected_style'] = self.request.GET.get('style', '')
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if 'export_csv' in request.GET:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="style_costing_report.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow([
+                'Style Name', 'Currency', 'Exchange Rate', 'Total Fabric Cost',
+                'Total Accessory Cost', 'Total Cost', 'Margin/Markup (%)',
+                'Discount (%)', 'Landed Cost', 'Retail Price'
+            ])
+
+            queryset = self.get_queryset()
+            for costing in queryset:
+                writer.writerow([
+                    costing.style.name,
+                    costing.currency.code if costing.currency else '',
+                    costing.exchange_rate,
+                    costing.total_fabric_cost,
+                    costing.total_accessory_cost,
+                    costing.total_cost,
+                    costing.margin_markup,
+                    costing.discount,
+                    costing.landed_cost,
+                    costing.retail_price,
+                ])
+            return response
+        if 'export_pdf' in request.GET:
+            queryset = self.get_queryset()
+            context = {
+                'style_costings': queryset,
+                'all_styles': Style.objects.all(), # Pass all_styles for filter display in PDF if needed
+                'selected_style': self.request.GET.get('style', ''),
+            }
+            pdf = self.render_to_pdf('reports/style_costing_report_pdf.html', context)
+            if pdf:
+                response = HttpResponse(pdf, content_type='application/pdf')
+                filename = "Style_Costing_Report.pdf"
+                content = "attachment; filename='%s'" %(filename)
+                response['Content-Disposition'] = content
+                return response
+            return HttpResponse("Not found")
         return super().get(request, *args, **kwargs)

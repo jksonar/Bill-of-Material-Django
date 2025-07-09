@@ -9,11 +9,14 @@ class Color(models.Model):
 class Fabric(models.Model):
     name = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=50, unique=True, blank=True)
-    type = models.CharField(max_length=100, blank=True, null=True)
-    gsm = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    width = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    construction = models.CharField(max_length=255, blank=True, null=True)
+    composition = models.CharField(max_length=255, blank=True, null=True)
     supplier = models.CharField(max_length=255, blank=True, null=True)
-    notes = models.TextField(blank=True, null=True)
+    stock_in_hand = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    width = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    lead_time = models.IntegerField(blank=True, null=True) # in days
     image = models.ImageField(upload_to='fabric_images/', blank=True, null=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
@@ -45,11 +48,15 @@ class FabricColor(models.Model):
 class Accessory(models.Model):
     name = models.CharField(max_length=255, unique=True)
     code = models.CharField(max_length=50, unique=True, blank=True)
-    type = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    finish = models.CharField(max_length=100, blank=True, null=True)
     supplier = models.CharField(max_length=255, blank=True, null=True)
-    usage_notes = models.TextField(blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    weight = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    unit = models.CharField(max_length=50, blank=True, null=True)
+    lead_time = models.IntegerField(blank=True, null=True) # in days
+    stock = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     image = models.ImageField(upload_to='accessory_images/', blank=True, null=True)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def save(self, *args, **kwargs):
         if not self.code:
@@ -76,17 +83,3 @@ class AccessoryColor(models.Model):
     def __str__(self):
         return f'{self.accessory.name} - {self.color.name}'
 
-class Inventory(models.Model):
-    fabric = models.OneToOneField(Fabric, on_delete=models.CASCADE, null=True, blank=True)
-    accessory = models.OneToOneField(Accessory, on_delete=models.CASCADE, null=True, blank=True)
-    quantity = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
-
-    class Meta:
-        verbose_name_plural = "Inventory"
-
-    def __str__(self):
-        if self.fabric:
-            return f"Inventory for {self.fabric.name}: {self.quantity}"
-        elif self.accessory:
-            return f"Inventory for {self.accessory.name}: {self.quantity}"
-        return "Inventory Item"

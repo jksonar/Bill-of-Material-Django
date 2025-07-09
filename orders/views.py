@@ -53,8 +53,39 @@ class OrderDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['bom_fabrics'] = BOMFabric.objects.filter(order=self.object)
-        context['bom_accessories'] = BOMAccessory.objects.filter(order=self.object)
+        order = self.object
+
+        # Get all BOM versions for this order
+        all_bom_versions = BOMVersion.objects.filter(order=order).order_by('-version_number')
+        context['all_bom_versions'] = all_bom_versions
+
+        # Determine which BOM version to display
+        selected_version_id = self.request.GET.get('version')
+        if selected_version_id:
+            selected_version = all_bom_versions.filter(pk=selected_version_id).first()
+        else:
+            selected_version = all_bom_versions.first() # Default to latest
+
+        context['selected_bom_version'] = selected_version
+
+        if selected_version:
+            context['bom_fabrics'] = BOMFabric.objects.filter(order=order, version=selected_version)
+            context['bom_accessories'] = BOMAccessory.objects.filter(order=order, version=selected_version)
+        else:
+            context['bom_fabrics'] = BOMFabric.objects.none()
+            context['bom_accessories'] = BOMAccessory.objects.none()
+
+        # Get style costing information
+        style_costing = order.style.stylecosting
+        if style_costing:
+            context['total_order_cost'] = style_costing.total_cost * order.quantity
+            context['total_order_landed_cost'] = style_costing.landed_cost * order.quantity
+            context['total_order_retail_price'] = style_costing.retail_price * order.quantity
+        else:
+            context['total_order_cost'] = 0
+            context['total_order_landed_cost'] = 0
+            context['total_order_retail_price'] = 0
+
         return context
 
 class OrderUpdateView(UpdateView):

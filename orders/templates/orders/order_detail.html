@@ -13,32 +13,56 @@
 
     <a href="{% url 'orders:order_update' order.pk %}">Edit Order</a>
 
-    <h2>Fabric BOM</h2>
-    {% if bom_fabrics %}
-        <ul>
-            {% for bom_fabric in bom_fabrics %}
-                <li>
-                    {{ bom_fabric.fabric.name }}: Required - {{ bom_fabric.required_qty }}, Issued - {{ bom_fabric.issued_qty }}, Balance - {{ bom_fabric.balance }}
-                    (<a href="{% url 'orders:bom_fabric_update' bom_fabric.pk %}">Edit</a>)
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No fabric BOM for this order.</p>
-    {% endif %}
+    <h2>Costing Summary</h2>
+    <p>Total Order Cost: {{ total_order_cost }}</p>
+    <p>Total Order Landed Cost: {{ total_order_landed_cost }}</p>
+    <p>Total Order Retail Price: {{ total_order_retail_price }}</p>
 
-    <h2>Accessory BOM</h2>
-    {% if bom_accessories %}
-        <ul>
-            {% for bom_accessory in bom_accessories %}
-                <li>
-                    {{ bom_accessory.accessory.name }}: Required - {{ bom_accessory.required_qty }}, Issued - {{ bom_accessory.issued_qty }}, Balance - {{ bom_accessory.balance }}
-                    (<a href="{% url 'orders:bom_accessory_update' bom_accessory.pk %}">Edit</a>)
-                </li>
+    <h2>Bill of Materials (BOM)</h2>
+    <form method="get" action="{% url 'orders:order_detail' order.pk %}">
+        <label for="version">Select BOM Version:</label>
+        <select name="version" id="version" onchange="this.form.submit()">
+            {% for version in all_bom_versions %}
+                <option value="{{ version.pk }}" {% if version.pk == selected_bom_version.pk %}selected{% endif %}>
+                    Version {{ version.version_number }} ({{ version.created_at|date:"Y-m-d H:i" }})
+                </option>
             {% endfor %}
-        </ul>
+        </select>
+    </form>
+
+    {% if selected_bom_version %}
+        <h3>Displaying BOM Version: {{ selected_bom_version.version_number }}</h3>
+        <p><a href="{% url 'reports:bom_diff' %}?order={{ order.pk }}&version1={{ selected_bom_version.pk }}&version2=">Compare with another version</a></p>
+
+        <h4>Fabric BOM</h4>
+        {% if bom_fabrics %}
+            <ul>
+                {% for bom_fabric in bom_fabrics %}
+                    <li>
+                        {{ bom_fabric.fabric.name }}: Required - {{ bom_fabric.required_qty }}, Issued - {{ bom_fabric.issued_qty }}, Balance - {{ bom_fabric.balance }}
+                        (<a href="{% url 'orders:bom_fabric_update' bom_fabric.pk %}">Edit</a>)
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No fabric BOM for this version.</p>
+        {% endif %}
+
+        <h4>Accessory BOM</h4>
+        {% if bom_accessories %}
+            <ul>
+                {% for bom_accessory in bom_accessories %}
+                    <li>
+                        {{ bom_accessory.accessory.name }}: Required - {{ bom_accessory.required_qty }}, Issued - {{ bom_accessory.issued_qty }}, Balance - {{ bom_accessory.balance }}
+                        (<a href="{% url 'orders:bom_accessory_update' bom_accessory.pk %}">Edit</a>)
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No accessory BOM for this version.</p>
+        {% endif %}
     {% else %}
-        <p>No accessory BOM for this order.</p>
+        <p>No BOM versions available for this order.</p>
     {% endif %}
 
     <a href="{% url 'orders:order_list' %}">Back to Order List</a>

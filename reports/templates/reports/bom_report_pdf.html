@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BOM Report</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h1, h2, h3, h4 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>BOM Report</h1>
+
+    {% for entry in bom_entries %}
+        {% ifchanged entry.order %}
+            <h2>Order: {{ entry.order.order_no }}</h2>
+            <h3>Style: {{ entry.order.style.name }}</h3>
+
+            <h4>Fabrics</h4>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Fabric</th>
+                        <th>Required Quantity</th>
+                        <th>Issued Quantity</th>
+                        <th>Balance</th>
+                        <th>BOM Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+        {% endifchanged %}
+        {% if entry.fabric %}
+            <tr>
+                <td>{{ entry.fabric.name }}</td>
+                <td>{{ entry.required_qty }}</td>
+                <td>{{ entry.issued_qty }}</td>
+                <td>{{ entry.balance }}</td>
+                <td>{{ entry.version.version_number }}</td>
+            </tr>
+        {% endif %}
+        {% ifchanged entry.order %}
+                </tbody>
+            </table>
+
+            <h4>Accessories</h4>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Accessory</th>
+                        <th>Required Quantity</th>
+                        <th>Issued Quantity</th>
+                        <th>Balance</th>
+                        <th>BOM Version</th>
+                    </tr>
+                </thead>
+                <tbody>
+        {% endifchanged %}
+        {% if entry.accessory %}
+            <tr>
+                <td>{{ entry.accessory.name }}</td>
+                <td>{{ entry.required_qty }}</td>
+                <td>{{ entry.issued_qty }}</td>
+                <td>{{ entry.balance }}</td>
+                <td>{{ entry.version.version_number }}</td>
+            </tr>
+        {% endif %}
+        {% if forloop.last %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% empty %}
+        <p>No BOM entries found for the selected filters.</p>
+    {% endfor %}
+</body>
+</html>

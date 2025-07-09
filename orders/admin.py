@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Order, BOMFabric, BOMAccessory, BOMVersion
+from .models import Order, BOMFabric, BOMAccessory, BOMVersion, OrderItem
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 1
+    raw_id_fields = ('style_variant',)
 
 class BOMFabricInline(admin.TabularInline):
     model = BOMFabric
@@ -15,10 +20,10 @@ class BOMAccessoryInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_no', 'customer', 'style', 'quantity', 'due_date', 'status')
-    list_filter = ('status', 'due_date', 'style')
-    search_fields = ('order_no', 'customer', 'style__name')
-    inlines = [BOMFabricInline, BOMAccessoryInline]
+    list_display = ('order_no', 'customer', 'customer_po_no', 'style', 'delivery_date', 'destination', 'season', 'shipment_mode', 'status')
+    list_filter = ('status', 'delivery_date', 'style', 'season', 'shipment_mode')
+    search_fields = ('order_no', 'customer', 'customer_po_no', 'style__name')
+    inlines = [OrderItemInline, BOMFabricInline, BOMAccessoryInline]
 
 @admin.register(BOMFabric)
 class BOMFabricAdmin(admin.ModelAdmin):

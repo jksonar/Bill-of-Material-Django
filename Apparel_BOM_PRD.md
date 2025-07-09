@@ -95,71 +95,72 @@ A web-based system to manage the Bill of Materials lifecycle specific to the app
 ## 4. ✅ Tasks Breakdown by Module
 
 ### 4.1 Fabric Master
-- [ ] Design Fabric form UI with auto-code generation
-- [ ] Implement Fabric CRUD APIs
-- [ ] Enable color-wise matrix for fabric entries
-- [ ] Integrate image upload feature
-- [ ] Link fabric to supplier and stock tracking
+- [x] Design Fabric form UI with auto-code generation
+- [x] Implement Fabric CRUD APIs
+- [x] Enable color-wise matrix for fabric entries
+- [x] Integrate image upload feature
+- [x] Link fabric to supplier and stock tracking
 
 ### 4.2 Accessories / Trims Master
-- [ ] Create trim entry screen with auto-generated code
-- [ ] Implement trims CRUD APIs and service layer
-- [ ] Build color-wise quantity management
-- [ ] Image preview and unit/cost support
+- [x] Create trim entry screen with auto-generated code
+- [x] Implement trims CRUD APIs and service layer
+- [x] Build color-wise quantity management
+- [x] Image preview and unit/cost support
 
 ### 4.3 Stylewise Consumption
-- [ ] Define size-color variants for styles
-- [ ] Link components to styles with consumption units
-- [ ] Input discount %, retail price, and costing basis
+- [x] Define size-color variants for styles
+- [x] Link components to styles with consumption units
+- [x] Input discount %, retail price, and costing basis
 - [ ] Enable association of related items (e.g., bottom to top)
 
 ### 4.4 Stylewise Costing
-- [ ] Cost sheet view with material, production, OH
-- [ ] Enable multiple landed cost/retail price entries
-- [ ] Calculation logic for cost summaries and discounts
-- [ ] Add support for alternate currencies
+- [x] Cost sheet view with material, production, OH
+- [x] Enable multiple landed cost/retail price entries
+- [x] Calculation logic for cost summaries and discounts
+- [x] Add support for alternate currencies
 
 ### 4.5 BOM (Fabric and Accessories)
-- [ ] Design BOM input UI for style linking
-- [ ] Separate tabs for fabric and accessories
-- [ ] Enable per-item wastage and consumption input
-- [ ] Implement version history tracking
+- [x] Design BOM input UI for style linking
+- [x] Separate tabs for fabric and accessories
+- [x] Enable per-item wastage and consumption input
+- [x] Implement version history tracking
 - [ ] Build diff/rollback view
 
 ### 4.6 BOM Report
-- [ ] Generate style-specific BOM printable reports
-- [ ] Include size-color matrix breakdown
+- [x] Generate style-specific BOM printable reports
+- [x] Include size-color matrix breakdown
 - [ ] Export to PDF and Excel
 
 ### 4.7 Order Entry
-- [ ] Create order form with PO fields and customer info
-- [ ] Add multi-size, color, and quantity grid
-- [ ] Integrate with BOM and costing for validation
+- [x] Create order form with PO fields and customer info
+- [x] Add multi-size, color, and quantity grid
+- [x] Integrate with BOM and costing for validation
 
 ### 4.8 Purchase Order
-- [ ] Auto-generate PO numbers
-- [ ] Select supplier, material, price, qty, delivery
-- [ ] Implement editable payment terms
-- [ ] Link POs to BOMs and style requirements
+- [x] Auto-generate PO numbers
+- [x] Select supplier, material, price, qty, delivery
+- [x] Implement editable payment terms
+- [x] Link POs to BOMs and style requirements
 
 ### 4.9 Purchase Order Report
-- [ ] Create printable PO format
-- [ ] Include shipping and terms details
-- [ ] Add validation and remarks section
+- [x] Create printable PO format
+- [x] Include shipping and terms details
+- [x] Add validation and remarks section
 
-### 4.10 Purchase Receipt
-- [ ] Input receipt against PO
-- [ ] Record quantity, unit cost, inspector
-- [ ] Mark PO as partially/fully received
+### 4.11 Purchase Receipt
+- [x] Input receipt against PO
+- [x] Record quantity, unit cost, inspector
+- [x] Mark PO as partially/fully received
+- [x] Update inventory balance on receipt
 
 ### 4.11 Purchase Receipt Report
-- [ ] Printable receipt with full transaction log
+- [x] Printable receipt with full transaction log
 - [ ] Export and store with PO history
 
 ### 4.12 Admin & Roles
-- [ ] Setup user roles and permissions
-- [ ] Secure CRUD operations based on roles
-- [ ] Add user login and session management
+- [x] Setup user roles and permissions
+- [x] Secure CRUD operations based on roles
+- [x] Add user login and session management
 
 ---
 

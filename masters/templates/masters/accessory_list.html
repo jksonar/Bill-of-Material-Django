@@ -5,7 +5,9 @@
 </head>
 <body>
     <h1>Accessory List</h1>
-    <a href="{% url 'masters:accessory_create' %}">Add New Accessory</a>
+    {% if perms.masters.add_accessory %}
+        <a href="{% url 'masters:accessory_create' %}">Add New Accessory</a>
+    {% endif %}
 
     <form method="get" action="{% url 'masters:accessory_list' %}">
         <input type="text" name="q" placeholder="Search by name, code, supplier" value="{{ query }}">
@@ -28,8 +30,9 @@
         {% for accessory in accessories %}
             <li>
                 <a href="{% url 'masters:accessory_detail' accessory.pk %}">{{ accessory.name }}</a>
-                (<a href="{% url 'masters:accessory_update' accessory.pk %}">Edit</a> |
-                <a href="{% url 'masters:accessory_delete' accessory.pk %}">Delete</a>)
+                ({% if perms.masters.change_accessory %}<a href="{% url 'masters:accessory_update' accessory.pk %}">Edit</a>{% endif %}
+                {% if perms.masters.change_accessory and perms.masters.delete_accessory %} | {% endif %}
+                {% if perms.masters.delete_accessory %}<a href="{% url 'masters:accessory_delete' accessory.pk %}">Delete</a>{% endif %})
             </li>
         {% empty %}
             <li>No accessories found.</li>

@@ -5,7 +5,9 @@
 </head>
 <body>
     <h1>Fabric List</h1>
-    <a href="{% url 'masters:fabric_create' %}">Add New Fabric</a>
+    {% if perms.masters.add_fabric %}
+        <a href="{% url 'masters:fabric_create' %}">Add New Fabric</a>
+    {% endif %}
 
     <form method="get" action="{% url 'masters:fabric_list' %}">
         <input type="text" name="q" placeholder="Search by name, code, supplier" value="{{ query }}">
@@ -28,8 +30,9 @@
         {% for fabric in fabrics %}
             <li>
                 <a href="{% url 'masters:fabric_detail' fabric.pk %}">{{ fabric.name }}</a>
-                (<a href="{% url 'masters:fabric_update' fabric.pk %}">Edit</a> |
-                <a href="{% url 'masters:fabric_delete' fabric.pk %}">Delete</a>)
+                ({% if perms.masters.change_fabric %}<a href="{% url 'masters:fabric_update' fabric.pk %}">Edit</a>{% endif %}
+                {% if perms.masters.change_fabric and perms.masters.delete_fabric %} | {% endif %}
+                {% if perms.masters.delete_fabric %}<a href="{% url 'masters:fabric_delete' fabric.pk %}">Delete</a>{% endif %})
             </li>
         {% empty %}
             <li>No fabrics found.</li>

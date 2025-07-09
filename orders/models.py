@@ -1,5 +1,5 @@
 from django.db import models
-from styles.models import Style, StyleFabricConsumption, StyleAccessoryConsumption
+from styles.models import Style, StyleFabricConsumption, StyleAccessoryConsumption, StyleVariant
 from masters.models import Fabric, Accessory
 
 class BOMVersion(models.Model):
@@ -25,9 +25,12 @@ class Order(models.Model):
 
     order_no = models.CharField(max_length=100, unique=True)
     customer = models.CharField(max_length=255)
+    customer_po_no = models.CharField(max_length=100, blank=True, null=True)
     style = models.ForeignKey(Style, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-    due_date = models.DateField()
+    delivery_date = models.DateField(null=True, blank=True)
+    destination = models.CharField(max_length=255, blank=True, null=True)
+    season = models.CharField(max_length=100, blank=True, null=True)
+    shipment_mode = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -43,9 +46,11 @@ class Order(models.Model):
             new_version_number = last_version.version_number + 1
         bom_version = BOMVersion.objects.create(order=self, version_number=new_version_number)
 
+        total_order_quantity = sum(item.quantity for item in self.orderitem_set.all())
+
         # Calculate Fabric BOM
         for sfc in self.style.stylefabricconsumption_set.all():
-            required_qty = sfc.quantity * self.quantity
+            required_qty = sfc.quantity * total_order_quantity
             BOMFabric.objects.create(
                 order=self,
                 fabric=sfc.fabric,
@@ -56,7 +61,7 @@ class Order(models.Model):
 
         # Calculate Accessory BOM
         for sac in self.style.styleaccessoryconsumption_set.all():
-            required_qty = sac.quantity * self.quantity
+            required_qty = sac.quantity * total_order_quantity
             BOMAccessory.objects.create(
                 order=self,
                 accessory=sac.accessory,
@@ -92,3 +97,11 @@ class BOMAccessory(models.Model):
 
     def __str__(self):
         return f"BOM Accessory for {self.order.order_no} - {self.accessory.name}"
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    style_variant = models.ForeignKey(StyleVariant, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.order.order_no} - {self.style_variant.style.name} ({self.style_variant.size.name}/{self.style_variant.color.name}): {self.quantity}"

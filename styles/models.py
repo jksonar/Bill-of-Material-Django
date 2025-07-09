@@ -17,6 +17,7 @@ class Size(models.Model):
 class Style(models.Model):
     code = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=255)
+    item_description = models.TextField(blank=True, null=True)
     category = models.CharField(max_length=100, blank=True, null=True)
     image = models.ImageField(upload_to='style_images/', blank=True, null=True)
 
@@ -75,7 +76,7 @@ class StyleCosting(models.Model):
 
     def calculate_costs(self):
         total_fabric_cost = sum(f.quantity * f.fabric.unit_price for f in self.style.stylefabricconsumption_set.all())
-        total_accessory_cost = sum(a.quantity * a.accessory.unit_price for a in self.style.styleaccessoryconsumption_set.all())
+        total_accessory_cost = sum(a.quantity * a.accessory.price for a in self.style.styleaccessoryconsumption_set.all())
         self.total_fabric_cost = total_fabric_cost * self.exchange_rate
         self.total_accessory_cost = total_accessory_cost * self.exchange_rate
         self.total_cost = (total_fabric_cost + total_accessory_cost) * self.exchange_rate
