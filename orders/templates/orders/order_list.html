@@ -60,7 +60,7 @@
                                 <td>{{ order.customer }}</td>
                                 <td>{{ order.style.name }}</td>
                                 <td>{{ order.quantity }}</td>
-                                <td>{{ order.due_date }}</td>
+                                <td>{{ order.delivery_date }}</td>
                                 <td><span class="badge bg-{{ order.status|lower }}">{{ order.get_status_display }}</span></td>
                                 <td class="text-end">
                                     <a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-sm btn-outline-info me-1">View</a>

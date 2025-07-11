@@ -27,6 +27,7 @@ class Order(models.Model):
     customer = models.CharField(max_length=255)
     customer_po_no = models.CharField(max_length=100, blank=True, null=True)
     style = models.ForeignKey(Style, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=0)
     delivery_date = models.DateField(null=True, blank=True)
     destination = models.CharField(max_length=255, blank=True, null=True)
     season = models.CharField(max_length=100, blank=True, null=True)

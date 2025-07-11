@@ -44,7 +44,7 @@ class OrderListView(LoginRequiredMixin, ListView):
 class OrderCreateView(LoginRequiredMixin, CreateView):
     model = Order
     template_name = 'orders/order_form.html'
-    fields = ['order_no', 'customer', 'style', 'quantity', 'due_date', 'status']
+    fields = ['order_no', 'customer', 'style', 'quantity', 'delivery_date', 'status']
     success_url = reverse_lazy('orders:order_list')
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
@@ -92,7 +92,7 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 class OrderUpdateView(LoginRequiredMixin, UpdateView):
     model = Order
     template_name = 'orders/order_form.html'
-    fields = ['order_no', 'customer', 'style', 'quantity', 'due_date', 'status']
+    fields = ['order_no', 'customer', 'style', 'quantity', 'delivery_date', 'status']
     success_url = reverse_lazy('orders:order_list')
 
 class BOMFabricUpdateView(LoginRequiredMixin, UpdateView):

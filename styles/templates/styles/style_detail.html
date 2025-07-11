@@ -17,6 +17,20 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <p><strong>Category:</strong> {{ style.category }}</p>
+                <p><strong>Sizes:</strong>
+                    {% for size in style.sizes.all %}
+                        <span class="badge bg-secondary">{{ size.name }}</span>
+                    {% empty %}
+                        No sizes specified.
+                    {% endfor %}
+                </p>
+                <p><strong>Colors:</strong>
+                    {% for color in style.colors.all %}
+                        <span class="badge bg-secondary">{{ color.name }}</span>
+                    {% empty %}
+                        No colors specified.
+                    {% endfor %}
+                </p>
                 {% if style.image %}
                     <p><strong>Image:</strong><br><img src="{{ style.image.url }}" class="img-fluid rounded" style="max-width: 200px;" alt="{{ style.name }}"></p>
                 {% endif %}

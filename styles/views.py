@@ -8,6 +8,7 @@ import openpyxl
 import csv
 from .models import Style, StyleFabricConsumption, StyleAccessoryConsumption
 from masters.models import Fabric, Accessory
+from .forms import StyleForm, ConsumptionUploadForm
 
 class StyleListView(LoginRequiredMixin, ListView):
     model = Style
@@ -16,8 +17,8 @@ class StyleListView(LoginRequiredMixin, ListView):
 
 class StyleCreateView(LoginRequiredMixin, CreateView):
     model = Style
+    form_class = StyleForm
     template_name = 'styles/style_form.html'
-    fields = ['code', 'name', 'category', 'image']
     success_url = reverse_lazy('styles:style_list')
 
 class StyleDetailView(LoginRequiredMixin, DetailView):
@@ -27,8 +28,8 @@ class StyleDetailView(LoginRequiredMixin, DetailView):
 
 class StyleUpdateView(LoginRequiredMixin, UpdateView):
     model = Style
+    form_class = StyleForm
     template_name = 'styles/style_form.html'
-    fields = ['code', 'name', 'category', 'image']
     success_url = reverse_lazy('styles:style_list')
 
 class StyleDeleteView(LoginRequiredMixin, DeleteView):

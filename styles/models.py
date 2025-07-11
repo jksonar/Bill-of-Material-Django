@@ -20,6 +20,8 @@ class Style(models.Model):
     item_description = models.TextField(blank=True, null=True)
     category = models.CharField(max_length=100, blank=True, null=True)
     image = models.ImageField(upload_to='style_images/', blank=True, null=True)
+    sizes = models.ManyToManyField(Size, blank=True)
+    colors = models.ManyToManyField(Color, blank=True)
     associated_styles = models.ManyToManyField('self', blank=True)
 
     def __str__(self):
