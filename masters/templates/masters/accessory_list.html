@@ -17,26 +17,32 @@
         <form hx-get="{% url 'masters:accessory_list' %}" hx-target="#accessory-list-container" hx-indicator=".htmx-indicator" class="mb-4">
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
-                    <label for="searchQuery" class="form-label">Search</label>
-                    <input type="search" name="q" id="searchQuery" class="form-control" placeholder="Name, code, supplier" value="{{ query }}">
+                    <div class="form-floating">
+                        <input type="search" name="q" id="searchQuery" class="form-control" placeholder="Name, code, supplier" value="{{ query }}">
+                        <label for="searchQuery">Search</label>
+                    </div>
                 </div>
                 <div class="col-md-3">
-                    <label for="finishFilter" class="form-label">Finish</label>
-                    <select name="finish" id="finishFilter" class="form-select">
-                        <option value="">All Finishes</option>
-                        {% for finish in all_finishes %}
-                            <option value="{{ finish }}" {% if finish == selected_finish %}selected{% endif %}>{{ finish }}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="form-floating">
+                        <select name="finish" id="finishFilter" class="form-select">
+                            <option value="">All Finishes</option>
+                            {% for finish in all_finishes %}
+                                <option value="{{ finish }}" {% if finish == selected_finish %}selected{% endif %}>{{ finish }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="finishFilter">Finish</label>
+                    </div>
                 </div>
                 <div class="col-md-3">
-                    <label for="supplierFilter" class="form-label">Supplier</label>
-                    <select name="supplier" id="supplierFilter" class="form-select">
-                        <option value="">All Suppliers</option>
-                        {% for supplier in all_suppliers %}
-                            <option value="{{ supplier }}" {% if supplier == selected_supplier %}selected{% endif %}>{{ supplier }}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="form-floating">
+                        <select name="supplier" id="supplierFilter" class="form-select">
+                            <option value="">All Suppliers</option>
+                            {% for supplier in all_suppliers %}
+                                <option value="{{ supplier }}" {% if supplier == selected_supplier %}selected{% endif %}>{{ supplier }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="supplierFilter">Supplier</label>
+                    </div>
                 </div>
                 <div class="col-md-2 d-flex">
                     <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>

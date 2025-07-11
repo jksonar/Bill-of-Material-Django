@@ -133,11 +133,7 @@
                                 <div class="row g-3">
                                     <!-- Search Input -->
                                     <div class="col-lg-4 col-md-6">
-                                        <label for="searchQuery" class="form-label fw-semibold">
-                                            <i class="bi bi-search me-1"></i>
-                                            Search Fabrics
-                                        </label>
-                                        <div class="search-container position-relative">
+                                        <div class="form-floating">
                                             <input type="search" 
                                                    name="q" 
                                                    id="searchQuery" 
@@ -147,65 +143,60 @@
                                                    data-search
                                                    autocomplete="off"
                                                    aria-describedby="searchHelp">
-                                            <div id="searchHelp" class="form-text">Search across fabric names, codes, and suppliers</div>
+                                            <label for="searchQuery">Search Fabrics</label>
                                         </div>
                                     </div>
                                     
                                     <!-- Construction Filter -->
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="constructionFilter" class="form-label fw-semibold">
-                                            <i class="bi bi-layers me-1"></i>
-                                            Construction
-                                        </label>
-                                        <select name="construction" 
-                                                id="constructionFilter" 
-                                                class="form-select form-select-lg"
-                                                aria-describedby="constructionHelp">
-                                            <option value="">All Constructions</option>
-                                            {% for construction in all_constructions %}
-                                                <option value="{{ construction }}" 
-                                                        {% if construction == selected_construction %}selected{% endif %}>
-                                                    {{ construction }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                        <div id="constructionHelp" class="form-text">Filter by fabric construction type</div>
+                                        <div class="form-floating">
+                                            <select name="construction" 
+                                                    id="constructionFilter" 
+                                                    class="form-select form-select-lg"
+                                                    aria-describedby="constructionHelp">
+                                                <option value="">All Constructions</option>
+                                                {% for construction in all_constructions %}
+                                                    <option value="{{ construction }}" 
+                                                            {% if construction == selected_construction %}selected{% endif %}>
+                                                        {{ construction }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="constructionFilter">Construction</label>
+                                        </div>
                                     </div>
                                     
                                     <!-- Supplier Filter -->
                                     <div class="col-lg-3 col-md-6">
-                                        <label for="supplierFilter" class="form-label fw-semibold">
-                                            <i class="bi bi-building me-1"></i>
-                                            Supplier
-                                        </label>
-                                        <select name="supplier" 
-                                                id="supplierFilter" 
-                                                class="form-select form-select-lg"
-                                                aria-describedby="supplierHelp">
-                                            <option value="">All Suppliers</option>
-                                            {% for supplier in all_suppliers %}
-                                                <option value="{{ supplier }}" 
-                                                        {% if supplier == selected_supplier %}selected{% endif %}>
-                                                    {{ supplier }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                        <div id="supplierHelp" class="form-text">Filter by fabric supplier</div>
+                                        <div class="form-floating">
+                                            <select name="supplier" 
+                                                    id="supplierFilter" 
+                                                    class="form-select form-select-lg"
+                                                    aria-describedby="supplierHelp">
+                                                <option value="">All Suppliers</option>
+                                                {% for supplier in all_suppliers %}
+                                                    <option value="{{ supplier }}" 
+                                                            {% if supplier == selected_supplier %}selected{% endif %}>
+                                                        {{ supplier }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <label for="supplierFilter">Supplier</label>
+                                        </div>
                                     </div>
                                     
                                     <!-- Action Buttons -->
-                                    <div class="col-lg-2 col-md-6">
-                                        <label class="form-label fw-semibold text-transparent">Actions</label>
-                                        <div class="d-flex flex-column gap-2">
+                                    <div class="col-lg-2 col-md-6 d-flex align-items-end">
+                                        <div class="d-flex flex-column gap-2 w-100">
                                             <button type="submit" 
-                                                    class="btn btn-primary btn-lg"
+                                                    class="btn btn-primary btn-lg w-100"
                                                     data-loading-text="Filtering..."
                                                     aria-label="Apply filters">
                                                 <i class="bi bi-funnel me-2"></i>
                                                 Filter
                                             </button>
                                             <a href="{% url 'masters:fabric_list' %}" 
-                                               class="btn btn-outline-secondary" 
+                                               class="btn btn-outline-secondary w-100" 
                                                hx-get="{% url 'masters:fabric_list' %}" 
                                                hx-target="#main-content"
                                                data-loading-text="Clearing..."

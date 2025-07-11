@@ -16,9 +16,9 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <form action="" method="get">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="q" placeholder="Search styles..." value="{{ request.GET.q }}">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        <div class="form-floating">
+                            <input type="text" class="form-control" name="q" id="styleSearch" placeholder="Search styles..." value="{{ request.GET.q }}">
+                            <label for="styleSearch">Search styles...</label>
                         </div>
                     </form>
                 </div>

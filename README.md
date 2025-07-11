@@ -98,7 +98,12 @@ A comprehensive web-based BOM system tailored for the apparel industry to manage
    python manage.py createsuperuser
    ```
 
-6. **Run development server**
+6. **Populate with Sample Data (Optional)**
+   ```bash
+   python manage.py populate_sample_data
+   ```
+
+7. **Run development server**
    ```bash
    python manage.py runserver
    ```

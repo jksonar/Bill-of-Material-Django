@@ -12,25 +12,33 @@
         <form method="get" action="{% url 'orders:order_list' %}" class="mb-4">
             <div class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label for="searchQuery" class="form-label">Search</label>
-                    <input type="text" name="q" id="searchQuery" class="form-control" placeholder="Order No, Customer, Style" value="{{ search_query }}">
+                    <div class="form-floating">
+                        <input type="text" name="q" id="searchQuery" class="form-control" placeholder="Order No, Customer, Style" value="{{ search_query }}">
+                        <label for="searchQuery">Search</label>
+                    </div>
                 </div>
                 <div class="col-md-3">
-                    <label for="statusFilter" class="form-label">Status</label>
-                    <select name="status" id="statusFilter" class="form-select">
-                        <option value="">All Statuses</option>
-                        {% for status_value, status_label in all_statuses %}
-                            <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
-                        {% endfor %}
-                    </select>
+                    <div class="form-floating">
+                        <select name="status" id="statusFilter" class="form-select">
+                            <option value="">All Statuses</option>
+                            {% for status_value, status_label in all_statuses %}
+                                <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="statusFilter">Status</label>
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <label for="customerFilter" class="form-label">Customer</label>
-                    <input type="text" name="customer" id="customerFilter" class="form-control" placeholder="Filter by Customer" value="{{ selected_customer }}">
+                    <div class="form-floating">
+                        <input type="text" name="customer" id="customerFilter" class="form-control" placeholder="Filter by Customer" value="{{ selected_customer }}">
+                        <label for="customerFilter">Customer</label>
+                    </div>
                 </div>
                 <div class="col-md-2">
-                    <label for="styleFilter" class="form-label">Style</label>
-                    <input type="text" name="style" id="styleFilter" class="form-control" placeholder="Filter by Style" value="{{ selected_style }}">
+                    <div class="form-floating">
+                        <input type="text" name="style" id="styleFilter" class="form-control" placeholder="Filter by Style" value="{{ selected_style }}">
+                        <label for="styleFilter">Style</label>
+                    </div>
                 </div>
                 <div class="col-md-2 d-flex">
                     <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
