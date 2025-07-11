@@ -1,0 +1,67 @@
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">{{ accessory.name }}</h1>
+        <div>
+            <a href="{% url 'masters:accessory_list' %}" class="btn btn-secondary" hx-get="{% url 'masters:accessory_list' %}" hx-target="#main-content">Back to List</a>
+            {% if perms.masters.change_accessory %}
+                <a href="{% url 'masters:accessory_update' accessory.pk %}" class="btn btn-primary" hx-get="{% url 'masters:accessory_update' accessory.pk %}" hx-target="#modal-container" data-bs-toggle="modal" data-bs-target="#modal-container">Edit</a>
+            {% endif %}
+            {% if perms.masters.delete_accessory %}
+                <a href="{% url 'masters:accessory_delete' accessory.pk %}" class="btn btn-danger" hx-get="{% url 'masters:accessory_delete' accessory.pk %}" hx-target="#modal-container" data-bs-toggle="modal" data-bs-target="#modal-container">Delete</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Code</th>
+                        <td>{{ accessory.code }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ accessory.description|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Finish</th>
+                        <td>{{ accessory.finish|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Supplier</th>
+                        <td>{{ accessory.supplier|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Price</th>
+                        <td>${{ accessory.price|default:"0.00" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Weight</th>
+                        <td>{{ accessory.weight|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Unit</th>
+                        <td>{{ accessory.unit|default:"N/A" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Lead Time</th>
+                        <td>{{ accessory.lead_time|default:"N/A" }} days</td>
+                    </tr>
+                    <tr>
+                        <th>Stock</th>
+                        <td>{{ accessory.stock|default:"N/A" }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                {% if accessory.image %}
+                    <img src="{{ accessory.image.url }}" alt="{{ accessory.name }}" class="img-fluid rounded">
+                {% else %}
+                    <div class="text-center text-muted p-5 border rounded">
+                        No Image Available
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

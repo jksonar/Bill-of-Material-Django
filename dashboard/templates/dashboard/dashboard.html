@@ -3,59 +3,54 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h1 class="card-title">Welcome to the BOM Management System Dashboard</h1>
-                <p class="card-text">Use the navigation menu above to access different modules and manage your Bill of Materials, orders, purchases, and reports.</p>
-                <hr>
-                <div class="row text-center">
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-light h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Masters</h5>
-                                <p class="card-text">Manage fabrics, accessories, and other master data.</p>
-                                <a href="{% url 'masters:fabric_list' %}" class="btn btn-outline-primary">Go to Masters</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-light h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Styles</h5>
-                                <p class="card-text">Define and manage product styles and their consumption.</p>
-                                <a href="{% url 'styles:style_list' %}" class="btn btn-outline-primary">Go to Styles</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-light h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Orders</h5>
-                                <p class="card-text">Create and track customer orders and their BOMs.</p>
-                                <a href="{% url 'orders:order_list' %}" class="btn btn-outline-primary">Go to Orders</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-light h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Purchase</h5>
-                                <p class="card-text">Manage purchase orders and material receipts.</p>
-                                <a href="{% url 'purchase:fabric_po_list' %}" class="btn btn-outline-primary">Go to Purchase</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card bg-light h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">Reports</h5>
-                                <p class="card-text">Generate various reports for BOM, purchase, and costing.</p>
-                                <a href="{% url 'reports:bom_report' %}" class="btn btn-outline-primary">Go to Reports</a>
-                            </div>
-                        </div>
-                    </div>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Dashboard</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Masters</h5>
+                    <p class="card-text">Manage fabrics, accessories, and other master data.</p>
+                    <a href="{% url 'masters:fabric_list' %}" class="btn btn-primary">Go to Masters</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Styles</h5>
+                    <p class="card-text">Define and manage product styles and their consumption.</p>
+                    <a href="{% url 'styles:style_list' %}" class="btn btn-primary">Go to Styles</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Orders</h5>
+                    <p class="card-text">Create and track customer orders and their BOMs.</p>
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-primary">Go to Orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Purchase</h5>
+                    <p class="card-text">Manage purchase orders and material receipts.</p>
+                    <a href="{% url 'purchase:fabric_po_list' %}" class="btn btn-primary">Go to Purchase</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Reports</h5>
+                    <p class="card-text">Generate various reports for BOM, purchase, and costing.</p>
+                    <a href="{% url 'reports:bom_report' %}" class="btn btn-primary">Go to Reports</a>
                 </div>
             </div>
         </div>

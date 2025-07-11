@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'reports',
     'guardian',
     'dashboard',
+    'django_htmx',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -60,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
 ]
 
 ROOT_URLCONF = 'bom_project.urls'

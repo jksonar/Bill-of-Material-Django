@@ -3,19 +3,22 @@
 {% block title %}Accessory List{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
+<div class="card shadow-sm" hx-target="#main-content" hx-push-url="true">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h1 class="mb-0">Accessory List</h1>
-        {% if perms.masters.add_accessory %}
-            <a href="{% url 'masters:accessory_create' %}" class="btn btn-primary">Add New Accessory</a>
-        {% endif %}
+        <div>
+            <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            {% if perms.masters.add_accessory %}
+                <a href="{% url 'masters:accessory_create' %}" class="btn btn-primary" hx-get="{% url 'masters:accessory_create' %}" hx-target="#modal-container .modal-content" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#modal-container">Add New Accessory</a>
+            {% endif %}
+        </div>
     </div>
     <div class="card-body">
-        <form method="get" action="{% url 'masters:accessory_list' %}" class="mb-4">
+        <form hx-get="{% url 'masters:accessory_list' %}" hx-target="#accessory-list-container" hx-indicator=".htmx-indicator" class="mb-4">
             <div class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label for="searchQuery" class="form-label">Search</label>
-                    <input type="text" name="q" id="searchQuery" class="form-control" placeholder="Name, code, supplier" value="{{ query }}">
+                    <input type="search" name="q" id="searchQuery" class="form-control" placeholder="Name, code, supplier" value="{{ query }}">
                 </div>
                 <div class="col-md-3">
                     <label for="finishFilter" class="form-label">Finish</label>
@@ -37,50 +40,14 @@
                 </div>
                 <div class="col-md-2 d-flex">
                     <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
-                    <a href="{% url 'masters:accessory_list' %}" class="btn btn-outline-secondary">Clear</a>
+                    <a href="{% url 'masters:accessory_list' %}" class="btn btn-outline-secondary" hx-get="{% url 'masters:accessory_list' %}" hx-target="#main-content">Clear</a>
                 </div>
             </div>
         </form>
 
-        {% if accessories %}
-            <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Code</th>
-                            <th>Finish</th>
-                            <th>Supplier</th>
-                            <th>Price</th>
-                            <th class="text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for accessory in accessories %}
-                            <tr>
-                                <td><a href="{% url 'masters:accessory_detail' accessory.pk %}" class="text-decoration-none">{{ accessory.name }}</a></td>
-                                <td>{{ accessory.code }}</td>
-                                <td>{{ accessory.finish }}</td>
-                                <td>{{ accessory.supplier }}</td>
-                                <td>{{ accessory.price }}</td>
-                                <td class="text-end">
-                                    {% if perms.masters.change_accessory %}
-                                        <a href="{% url 'masters:accessory_update' accessory.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
-                                    {% endif %}
-                                    {% if perms.masters.delete_accessory %}
-                                        <a href="{% url 'masters:accessory_delete' accessory.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="alert alert-info" role="alert">
-                No accessories found matching your criteria.
-            </div>
-        {% endif %}
+        <div id="accessory-list-container">
+            {% include 'masters/partials/accessory_list_partial.html' %}
+        </div>
     </div>
 </div>
 {% endblock %}

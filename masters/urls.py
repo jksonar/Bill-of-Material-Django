@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import FabricListView, FabricCreateView, FabricDetailView, FabricUpdateView, FabricDeleteView, \
-    AccessoryListView, AccessoryCreateView, AccessoryDetailView, AccessoryUpdateView, AccessoryDeleteView
+from .views import FabricListView, FabricCreateView, FabricDetailView, FabricUpdateView, FabricDeleteView,     AccessoryListView, AccessoryCreateView, AccessoryDetailView, AccessoryUpdateView, AccessoryDeleteView
 
 app_name = 'masters'
 

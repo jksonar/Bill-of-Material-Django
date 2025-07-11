@@ -3,39 +3,11 @@
 {% block title %}Fabric Detail{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h1 class="mb-0">{{ fabric.name }} <small class="text-muted">({{ fabric.code }})</small></h1>
-        <div>
-            {% if perms.masters.change_fabric %}
-                <a href="{% url 'masters:fabric_update' fabric.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
-            {% endif %}
-            {% if perms.masters.delete_fabric %}
-                <a href="{% url 'masters:fabric_delete' fabric.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
-            {% endif %}
-        </div>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-6">
-                <p><strong>Description:</strong> {{ fabric.description }}</p>
-                <p><strong>Construction:</strong> {{ fabric.construction }}</p>
-                <p><strong>Composition:</strong> {{ fabric.composition }}</p>
-                <p><strong>Supplier:</strong> {{ fabric.supplier }}</p>
-                <p><strong>Width:</strong> {{ fabric.width }}</p>
-            </div>
-            <div class="col-md-6">
-                <p><strong>Weight:</strong> {{ fabric.weight }}</p>
-                <p><strong>Lead Time:</strong> {{ fabric.lead_time }} days</p>
-                <p><strong>Unit Price:</strong> {{ fabric.unit_price }}</p>
-                {% if fabric.image %}
-                    <p><strong>Image:</strong><br><img src="{{ fabric.image.url }}" class="img-fluid rounded" style="max-width: 200px;" alt="{{ fabric.name }}"></p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="card-footer text-end">
-        <a href="{% url 'masters:fabric_list' %}" class="btn btn-secondary">Back to list</a>
-    </div>
-</div>
+{% extends 'base.html' %}
+
+{% block title %}Fabric Detail{% endblock %}
+
+{% block content %}
+{% include 'masters/partials/fabric_detail_partial.html' %}
+{% endblock %}
 {% endblock %}

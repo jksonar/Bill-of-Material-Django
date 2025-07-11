@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 import openpyxl
-import csv
+from django.db import models
 from .models import Style, StyleFabricConsumption, StyleAccessoryConsumption
 from masters.models import Fabric, Accessory
 from .forms import StyleForm, ConsumptionUploadForm
@@ -14,6 +14,16 @@ class StyleListView(LoginRequiredMixin, ListView):
     model = Style
     template_name = 'styles/style_list.html'
     context_object_name = 'styles'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                models.Q(name__icontains=query) |
+                models.Q(code__icontains=query)
+            )
+        return queryset
 
 class StyleCreateView(LoginRequiredMixin, CreateView):
     model = Style

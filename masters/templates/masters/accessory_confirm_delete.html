@@ -3,17 +3,5 @@
 {% block title %}Confirm Delete Accessory{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header">
-        <h1 class="mb-0">Delete Accessory</h1>
-    </div>
-    <div class="card-body">
-        <p class="lead">Are you sure you want to delete the accessory "<strong>{{ accessory.name }}</strong>"?</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger me-2">Confirm Delete</button>
-            <a href="{% url 'masters:accessory_detail' accessory.pk %}" class="btn btn-secondary">Cancel</a>
-        </form>
-    </div>
-</div>
+{% include 'masters/partials/accessory_confirm_delete_partial.html' %}
 {% endblock %}

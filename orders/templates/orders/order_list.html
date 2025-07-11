@@ -6,7 +6,7 @@
 <div class="card shadow-sm">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h1 class="mb-0">Order List</h1>
-        <a href="{% url 'orders:order_create' %}" class="btn btn-primary">Create New Order</a>
+        <a href="{% url 'orders:order_create' %}" class="btn btn-primary" hx-get="{% url 'orders:order_create' %}" hx-target="#modal-container .modal-content" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#modal-container">Create New Order</a>
     </div>
     <div class="card-body">
         <form method="get" action="{% url 'orders:order_list' %}" class="mb-4">

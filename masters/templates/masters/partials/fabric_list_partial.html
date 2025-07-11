@@ -1,0 +1,39 @@
+{% if fabrics %}
+<div class="table-responsive">
+    <table class="table table-hover table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Construction</th>
+                <th>Supplier</th>
+                <th>Unit Price</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fabric in fabrics %}
+                <tr>
+                    <td><a href="{% url 'masters:fabric_detail' fabric.pk %}" hx-get="{% url 'masters:fabric_detail' fabric.pk %}" hx-target="#main-content" class="text-decoration-none">{{ fabric.name }}</a></td>
+                    <td>{{ fabric.code }}</td>
+                    <td>{{ fabric.construction }}</td>
+                    <td>{{ fabric.supplier }}</td>
+                    <td>{{ fabric.unit_price }}</td>
+                    <td class="text-end">
+                        {% if perms.masters.change_fabric %}
+                            <a href="{% url 'masters:fabric_update' fabric.pk %}" class="btn btn-sm btn-outline-primary me-1" hx-get="{% url 'masters:fabric_update' fabric.pk %}" hx-target="#modal-container" data-bs-toggle="modal" data-bs-target="#modal-container">Edit</a>
+                        {% endif %}
+                        {% if perms.masters.delete_fabric %}
+                            <a href="{% url 'masters:fabric_delete' fabric.pk %}" class="btn btn-sm btn-outline-danger" hx-get="{% url 'masters:fabric_delete' fabric.pk %}" hx-target="#modal-container" data-bs-toggle="modal" data-bs-target="#modal-container">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+    No fabrics found matching your criteria.
+</div>
+{% endif %}

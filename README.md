@@ -38,7 +38,7 @@ To get started with the project, clone the repository and install the required d
 
 ```bash
 git clone https://github.com/jksonar/Bill-of-Material-Django.git
-cd your-project
+cd Bill-of-Material-Django
 pip install -r requirements.txt
 ```
 

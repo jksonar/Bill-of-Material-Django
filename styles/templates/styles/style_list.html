@@ -3,20 +3,34 @@
 {% block title %}Style List{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h1 class="mb-0">Style List</h1>
-        <div>
-            <a href="{% url 'styles:style_create' %}" class="btn btn-primary me-2">Add New Style</a>
-            <a href="{% url 'styles:export_consumption' %}" class="btn btn-info me-2">Export Consumption</a>
-            <a href="{% url 'styles:import_consumption' %}" class="btn btn-info me-2">Import Consumption</a>
-            <a href="{% url 'reports:style_costing_report' %}" class="btn btn-secondary">Costing Report</a>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Style List</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <a href="{% url 'styles:style_create' %}" class="btn btn-sm btn-outline-secondary" hx-get="{% url 'styles:style_create' %}" hx-target="#modal-container .modal-content" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#modal-container">Add New Style</a>
         </div>
     </div>
-    <div class="card-body">
-        {% if styles %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <form action="" method="get">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="q" placeholder="Search styles..." value="{{ request.GET.q }}">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{% url 'styles:export_consumption' %}" class="btn btn-sm btn-outline-secondary">Export Consumption</a>
+                    <a href="{% url 'styles:import_consumption' %}" class="btn btn-sm btn-outline-secondary">Import Consumption</a>
+                    <a href="{% url 'reports:style_costing_report' %}" class="btn btn-sm btn-outline-secondary">Costing Report</a>
+                </div>
+            </div>
+
             <div class="table-responsive">
-                <table class="table table-hover table-striped align-middle">
+                <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Code</th>
@@ -30,7 +44,7 @@
                         {% for style in styles %}
                             <tr>
                                 <td>{{ style.code }}</td>
-                                <td><a href="{% url 'styles:style_detail' style.pk %}" class="text-decoration-none">{{ style.name }}</a></td>
+                                <td><a href="{% url 'styles:style_detail' style.pk %}">{{ style.name }}</a></td>
                                 <td>{{ style.category }}</td>
                                 <td>
                                     {% if style.image %}
@@ -40,19 +54,15 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-end">
-                                    <a href="{% url 'styles:style_update' style.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
-                                    <a href="{% url 'styles:style_delete' style.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    <a href="{% url 'styles:style_update' style.pk %}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="{% url 'styles:style_delete' style.pk %}" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        {% else %}
-            <div class="alert alert-info" role="alert">
-                No styles found.
-            </div>
-        {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
