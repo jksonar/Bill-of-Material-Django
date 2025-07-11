@@ -23,12 +23,12 @@ class FabricListView(PermissionRequiredMixin, ListView):
             queryset = queryset.filter(
                 models.Q(name__icontains=query) |
                 models.Q(code__icontains=query) |
-                models.Q(supplier__icontains=query)
+                models.Q(supplier__name__icontains=query)
             )
         if fabric_construction:
             queryset = queryset.filter(construction__icontains=fabric_construction)
         if supplier:
-            queryset = queryset.filter(supplier__icontains=supplier)
+            queryset = queryset.filter(supplier__name__icontains=supplier)
         return queryset
 
     def get_template_names(self):
@@ -42,7 +42,7 @@ class FabricListView(PermissionRequiredMixin, ListView):
         context['selected_construction'] = self.request.GET.get('construction', '')
         context['selected_supplier'] = self.request.GET.get('supplier', '')
         context['all_constructions'] = Fabric.objects.values_list('construction', flat=True).distinct().exclude(construction__isnull=True).exclude(construction__exact='')
-        context['all_suppliers'] = Fabric.objects.values_list('supplier', flat=True).distinct().exclude(supplier__isnull=True).exclude(supplier__exact='')
+        context['all_suppliers'] = Fabric.objects.values_list('supplier__name', flat=True).distinct().exclude(supplier__isnull=True).exclude(supplier__name__exact='')
         return context
 
 class FabricCreateView(PermissionRequiredMixin, CreateView):
@@ -131,12 +131,12 @@ class AccessoryListView(PermissionRequiredMixin, ListView):
             queryset = queryset.filter(
                 models.Q(name__icontains=query) |
                 models.Q(code__icontains=query) |
-                models.Q(supplier__icontains=query)
+                models.Q(supplier__name__icontains=query)
             )
         if accessory_finish:
             queryset = queryset.filter(finish__icontains=accessory_finish)
         if supplier:
-            queryset = queryset.filter(supplier__icontains=supplier)
+            queryset = queryset.filter(supplier__name__icontains=supplier)
         return queryset
 
     def get_template_names(self):
@@ -150,7 +150,7 @@ class AccessoryListView(PermissionRequiredMixin, ListView):
         context['selected_finish'] = self.request.GET.get('finish', '')
         context['selected_supplier'] = self.request.GET.get('supplier', '')
         context['all_finishes'] = Accessory.objects.values_list('finish', flat=True).distinct().exclude(finish__isnull=True).exclude(finish__exact='')
-        context['all_suppliers'] = Accessory.objects.values_list('supplier', flat=True).distinct().exclude(supplier__isnull=True)
+        context['all_suppliers'] = Accessory.objects.values_list('supplier__name', flat=True).distinct().exclude(supplier__isnull=True).exclude(supplier__name__exact='')
         return context
 
 class AccessoryCreateView(PermissionRequiredMixin, CreateView):
