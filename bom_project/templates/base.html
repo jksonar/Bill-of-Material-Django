@@ -1,96 +1,200 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}BOM Management System{% endblock %}</title>
-    <link rel="stylesheet" href="https://bootswatch.com/5/materia/bootstrap.min.css">
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
-        }
-        .card {
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,.1);
-        }
-        .sidebar {
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            background-color: #343a40;
-            padding-top: 56px;
-            color: white;
-        }
-        .sidebar a {
-            color: rgba(255,255,255,.5);
-            display: block;
-            padding: 10px 20px;
-            text-decoration: none;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            color: white;
-            background-color: #495057;
-        }
-        .content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-        .htmx-indicator {
-            display: none;
-        }
-        .htmx-request .htmx-indicator {
-            display: inline;
-        }
-        .htmx-request.htmx-indicator{
-            display: inline;
-        }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/materia/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <!-- Custom CSS -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007bff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="BOM System">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{% static 'css/main.css' %}" as="style">
+    <link rel="preload" href="{% static 'js/main.js' %}" as="script">
 </head>
-<body>
-    <div class="sidebar">
-        <h4 class="text-center p-3">BOM System</h4>
-        <a href="{% url 'dashboard:dashboard' %}" class="nav-link">Dashboard</a>
-        <a href="{% url 'masters:fabric_list' %}" class="nav-link">Fabrics</a>
-        <a href="{% url 'masters:accessory_list' %}" class="nav-link">Accessories</a>
-        <a href="{% url 'styles:style_list' %}" class="nav-link">Styles</a>
-        <a href="{% url 'orders:order_list' %}" class="nav-link">Orders</a>
-        <a href="{% url 'purchase:fabric_po_list' %}" class="nav-link">Purchase Orders</a>
-        <a href="{% url 'purchase:fabric_receipt_list' %}" class="nav-link">Purchase Receipts</a>
-        <a href="{% url 'reports:bom_report' %}" class="nav-link">Reports</a>
-        <hr>
-        {% if user.is_authenticated %}
-            <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
-            <a href="#" onclick="document.getElementById('logout-form').submit();" class="nav-link">Logout</a>
-            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                {% csrf_token %}
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}" class="nav-link">Login</a>
-        {% endif %}
-    </div>
+<body data-theme="light">
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Mobile menu toggle -->
+    <button class="mobile-menu-toggle d-md-none" data-mobile-menu-toggle aria-label="Toggle navigation menu">
+        <i class="bi bi-list"></i>
+    </button>
+    
+    <!-- Theme toggle -->
+    <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+    
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <i class="bi bi-gear-fill"></i>
+                <span>BOM System</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-content">
+            <ul class="nav flex-column sidebar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard:dashboard' %}" data-nav-link>
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'masters:fabric_list' %}" data-nav-link>
+                        <i class="bi bi-scissors"></i>
+                        <span>Fabrics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'masters:accessory_list' %}" data-nav-link>
+                        <i class="bi bi-gem"></i>
+                        <span>Accessories</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'styles:style_list' %}" data-nav-link>
+                        <i class="bi bi-palette"></i>
+                        <span>Styles</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'orders:order_list' %}" data-nav-link>
+                        <i class="bi bi-cart"></i>
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'purchase:fabric_po_list' %}" data-nav-link>
+                        <i class="bi bi-receipt"></i>
+                        <span>Purchase Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'purchase:fabric_receipt_list' %}" data-nav-link>
+                        <i class="bi bi-inbox"></i>
+                        <span>Purchase Receipts</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'reports:bom_report' %}" data-nav-link>
+                        <i class="bi bi-graph-up"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <hr class="sidebar-divider">
+            
+            <ul class="nav flex-column sidebar-nav">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}" data-nav-link>
+                            <i class="bi bi-gear"></i>
+                            <span>Admin</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="document.getElementById('logout-form').submit();" data-nav-link>
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                            {% csrf_token %}
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}" data-nav-link>
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <span>{{ user.username|default:'Guest' }}</span>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Sidebar overlay for mobile -->
+    <div class="sidebar-overlay d-md-none"></div>
 
-    <div class="content">
-        <div id="messages-container">
+    <!-- Main Content -->
+    <main class="main-content" id="main-content" role="main">
+        <div class="content-wrapper">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    {% block breadcrumb %}
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard:dashboard' %}">Home</a></li>
+                    {% endblock %}
+                </ol>
+            </nav>
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>{% block page_title %}{% block title %}BOM Management System{% endblock %}{% endblock %}</h1>
+                    {% block page_description %}
+                    {% endblock %}
+                </div>
+                <div class="page-actions">
+                    {% block page_actions %}
+                    {% endblock %}
+                </div>
+            </div>
+            
+            <!-- Messages -->
             {% if messages %}
+            <div class="messages-container" id="messages-container">
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        {% if message.tags == 'success' %}
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        {% elif message.tags == 'error' %}
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {% elif message.tags == 'warning' %}
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        {% else %}
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        {% endif %}
+                        <div class="flex-grow-1">{{ message }}</div>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
+                </div>
                 {% endfor %}
+            </div>
             {% endif %}
+            
+            <!-- Main Content Area -->
+            <div class="content-area" hx-history-elt>
+                {% block content %}
+                {% endblock %}
+            </div>
         </div>
-        <div class="container-fluid" id="main-content" hx-history-elt>
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
+    </main>
 
     <div id="modal-container" class="modal fade" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -101,41 +205,125 @@
     </div>
 
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Re-initialize Bootstrap modals after HTMX swaps content into the modal container
+            // Enhanced modal handling with accessibility
             htmx.on('htmx:afterSwap', function(evt) {
                 if (evt.detail.target.id === 'modal-container') {
                     const modalElement = document.getElementById('modal-container');
                     const modal = new bootstrap.Modal(modalElement);
                     modal.show();
-                }
-            });
-            const sidebarLinks = document.querySelectorAll('.sidebar .nav-link');
-            const currentPath = window.location.pathname;
-
-            sidebarLinks.forEach(link => {
-                if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('active');
-                }
-            });
-
-            htmx.on('htmx:afterSwap', function(evt) {
-                if (evt.detail.target.id === 'main-content') {
-                    sidebarLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === window.location.pathname) {
-                            link.classList.add('active');
+                    
+                    // Focus management for accessibility
+                    modalElement.addEventListener('shown.bs.modal', function() {
+                        const firstInput = modalElement.querySelector('input, select, textarea, button');
+                        if (firstInput) {
+                            firstInput.focus();
                         }
                     });
                 }
+                
+                // Re-initialize Bootstrap components after HTMX swap
+                if (typeof bootstrap !== 'undefined') {
+                    // Initialize tooltips
+                    const tooltipTriggerList = [].slice.call(evt.detail.target.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                    
+                    // Initialize popovers
+                    const popoverTriggerList = [].slice.call(evt.detail.target.querySelectorAll('[data-bs-toggle="popover"]'));
+                    popoverTriggerList.map(function (popoverTriggerEl) {
+                        return new bootstrap.Popover(popoverTriggerEl);
+                    });
+                }
+                
+                // Reinitialize custom components
+                if (window.BOMSystem && window.BOMSystem.htmx) {
+                    window.BOMSystem.htmx.reinitializeComponents(evt.detail.target);
+                }
             });
+            
+            // Enhanced sidebar link management
+            const sidebarLinks = document.querySelectorAll('.sidebar .nav-link[data-nav-link]');
+            const currentPath = window.location.pathname;
 
+            function updateActiveLinks() {
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    link.removeAttribute('aria-current');
+                    if (link.getAttribute('href') === window.location.pathname) {
+                        link.classList.add('active');
+                        link.setAttribute('aria-current', 'page');
+                    }
+                });
+            }
+            
+            // Initial active link setup
+            updateActiveLinks();
+
+            // Update active links after HTMX navigation
+            htmx.on('htmx:afterSwap', function(evt) {
+                if (evt.detail.target.id === 'main-content' || evt.detail.target.classList.contains('content-area')) {
+                    updateActiveLinks();
+                }
+            });
+            
+            // Mobile sidebar functionality
+            const mobileToggle = document.querySelector('[data-mobile-menu-toggle]');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            if (mobileToggle && sidebar && overlay) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                    overlay.classList.toggle('show');
+                    document.body.classList.toggle('sidebar-open');
+                    
+                    // Update ARIA attributes
+                    const isOpen = sidebar.classList.contains('show');
+                    mobileToggle.setAttribute('aria-expanded', isOpen);
+                });
+                
+                overlay.addEventListener('click', function() {
+                    sidebar.classList.remove('show');
+                    overlay.classList.remove('show');
+                    document.body.classList.remove('sidebar-open');
+                    mobileToggle.setAttribute('aria-expanded', 'false');
+                });
+                
+                // Close sidebar on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                        sidebar.classList.remove('show');
+                        overlay.classList.remove('show');
+                        document.body.classList.remove('sidebar-open');
+                        mobileToggle.setAttribute('aria-expanded', 'false');
+                        mobileToggle.focus();
+                    }
+                });
+            }
+
+            // Enhanced loading indicators
             document.body.addEventListener('htmx:beforeRequest', function(evt) {
                 const indicator = htmx.find('.htmx-indicator');
                 if (indicator) {
                     indicator.style.display = 'inline';
+                }
+                
+                // Add loading state to buttons
+                if (evt.target.tagName === 'BUTTON' || evt.target.type === 'submit') {
+                    evt.target.classList.add('loading');
+                    if (evt.target.hasAttribute('data-loading-text')) {
+                        evt.target.setAttribute('data-original-text', evt.target.textContent);
+                        evt.target.textContent = evt.target.getAttribute('data-loading-text');
+                    }
                 }
             });
 
@@ -144,8 +332,64 @@
                 if (indicator) {
                     indicator.style.display = 'none';
                 }
+                
+                // Remove loading state from buttons
+                if (evt.target.tagName === 'BUTTON' || evt.target.type === 'submit') {
+                    evt.target.classList.remove('loading');
+                    if (evt.target.hasAttribute('data-original-text')) {
+                        evt.target.textContent = evt.target.getAttribute('data-original-text');
+                        evt.target.removeAttribute('data-original-text');
+                    }
+                }
+            });
+            
+            // Enhanced error handling
+            document.body.addEventListener('htmx:responseError', function(evt) {
+                if (window.BOMSystem && window.BOMSystem.notifications) {
+                    window.BOMSystem.notifications.error('Network error occurred. Please try again.');
+                } else {
+                    console.error('HTMX Response Error:', evt.detail);
+                }
+            });
+            
+            document.body.addEventListener('htmx:timeout', function(evt) {
+                if (window.BOMSystem && window.BOMSystem.notifications) {
+                    window.BOMSystem.notifications.warning('Request timed out. Please try again.');
+                } else {
+                    console.warn('HTMX Timeout:', evt.detail);
+                }
+            });
+            
+            // Success message handling
+            document.body.addEventListener('htmx:afterSwap', function(evt) {
+                // Check for success messages in the response
+                const successMessages = evt.detail.target.querySelectorAll('.alert-success');
+                if (successMessages.length > 0 && window.BOMSystem && window.BOMSystem.notifications) {
+                    successMessages.forEach(msg => {
+                        const text = msg.textContent.trim();
+                        if (text) {
+                            window.BOMSystem.notifications.success(text);
+                        }
+                    });
+                }
             });
         });
+        
+        // Performance monitoring
+        if ('performance' in window) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    const perfData = performance.getEntriesByType('navigation')[0];
+                    if (perfData && console.groupCollapsed) {
+                        console.groupCollapsed('Page Performance');
+                        console.log('Total Load Time:', Math.round(perfData.loadEventEnd - perfData.navigationStart), 'ms');
+                        console.log('DOM Content Loaded:', Math.round(perfData.domContentLoadedEventEnd - perfData.navigationStart), 'ms');
+                        console.log('First Paint:', Math.round(perfData.responseEnd - perfData.navigationStart), 'ms');
+                        console.groupEnd();
+                    }
+                }, 0);
+            });
+        }
     </script>
 </body>
 </html>

@@ -1,53 +1,362 @@
 {% extends 'base.html' %}
 
-{% block title %}Fabric List{% endblock %}
+{% block title %}Fabric Management{% endblock %}
+
+{% block page_title %}Fabric Management{% endblock %}
+
+{% block page_description %}
+<p class="text-muted mb-0">Manage fabric inventory, specifications, and supplier information</p>
+{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li class="breadcrumb-item"><a href="{% url 'masters:fabric_list' %}">Masters</a></li>
+<li class="breadcrumb-item active" aria-current="page">Fabrics</li>
+{% endblock %}
+
+{% block page_actions %}
+{% if perms.masters.add_fabric %}
+<button class="btn btn-primary btn-lg" 
+        hx-get="{% url 'masters:fabric_create' %}" 
+        hx-target="#modal-container .modal-content" 
+        hx-trigger="click" 
+        data-bs-toggle="modal" 
+        data-bs-target="#modal-container"
+        data-loading-text="Loading..."
+        aria-label="Add new fabric">
+    <i class="bi bi-plus-circle me-2"></i>
+    Add New Fabric
+</button>
+{% endif %}
+{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm" hx-target="#main-content" hx-push-url="true">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h1 class="mb-0">Fabric List</h1>
-        <div>
-            <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            {% if perms.masters.add_fabric %}
-                <a href="{% url 'masters:fabric_create' %}" class="btn btn-primary" hx-get="{% url 'masters:fabric_create' %}" hx-target="#modal-container .modal-content" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#modal-container">Add New Fabric</a>
-            {% endif %}
-        </div>
-    </div>
-    <div class="card-body">
-        <form hx-get="{% url 'masters:fabric_list' %}" hx-target="#fabric-list-container" hx-indicator=".htmx-indicator" class="mb-4">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-4">
-                    <label for="searchQuery" class="form-label">Search</label>
-                    <input type="search" name="q" id="searchQuery" class="form-control" placeholder="Name, code, supplier" value="{{ query }}">
-                </div>
-                <div class="col-md-3">
-                    <label for="constructionFilter" class="form-label">Construction</label>
-                    <select name="construction" id="constructionFilter" class="form-select">
-                        <option value="">All Constructions</option>
-                        {% for construction in all_constructions %}
-                            <option value="{{ construction }}" {% if construction == selected_construction %}selected{% endif %}>{{ construction }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="supplierFilter" class="form-label">Supplier</label>
-                    <select name="supplier" id="supplierFilter" class="form-select">
-                        <option value="">All Suppliers</option>
-                        {% for supplier in all_suppliers %}
-                            <option value="{{ supplier }}" {% if supplier == selected_supplier %}selected{% endif %}>{{ supplier }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2 d-flex">
-                    <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
-                    <a href="{% url 'masters:fabric_list' %}" class="btn btn-outline-secondary" hx-get="{% url 'masters:fabric_list' %}" hx-target="#main-content">Clear</a>
+<div class="fabric-management-container">
+    <!-- Quick Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3">
+                            <i class="bi bi-scissors fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Total Fabrics</h6>
+                            <h3 class="mb-0">{{ total_fabrics|default:"0" }}</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon bg-success bg-opacity-10 text-success rounded-circle p-3 me-3">
+                            <i class="bi bi-check-circle fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Active Fabrics</h6>
+                            <h3 class="mb-0">{{ active_fabrics|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon bg-info bg-opacity-10 text-info rounded-circle p-3 me-3">
+                            <i class="bi bi-building fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Suppliers</h6>
+                            <h3 class="mb-0">{{ total_suppliers|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="stats-card card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="stats-icon bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3">
+                            <i class="bi bi-palette fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Constructions</h6>
+                            <h3 class="mb-0">{{ total_constructions|default:"0" }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div id="fabric-list-container">
-            {% include 'masters/partials/fabric_list_partial.html' %}
+    <!-- Main Content Card -->
+    <div class="card border-0 shadow-sm" hx-target="#main-content" hx-push-url="true">
+        <div class="card-header bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Fabric Inventory</h5>
+                    <small class="text-muted">Manage your fabric collection</small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <div class="btn-group" role="group" aria-label="View options">
+                        <button type="button" class="btn btn-outline-secondary btn-sm active" data-view="grid" aria-label="Grid view">
+                            <i class="bi bi-grid-3x3-gap"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-view="list" aria-label="List view">
+                            <i class="bi bi-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Enhanced Search and Filter Section -->
+            <div class="search-filter-section mb-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="search-filter-card bg-light rounded p-4">
+                            <form hx-get="{% url 'masters:fabric_list' %}" 
+                                  hx-target="#fabric-list-container" 
+                                  hx-indicator=".htmx-indicator" 
+                                  hx-trigger="input delay:500ms from:input[type=search], change from:select, submit"
+                                  data-validate
+                                  class="search-form">
+                                
+                                <div class="row g-3">
+                                    <!-- Search Input -->
+                                    <div class="col-lg-4 col-md-6">
+                                        <label for="searchQuery" class="form-label fw-semibold">
+                                            <i class="bi bi-search me-1"></i>
+                                            Search Fabrics
+                                        </label>
+                                        <div class="search-container position-relative">
+                                            <input type="search" 
+                                                   name="q" 
+                                                   id="searchQuery" 
+                                                   class="form-control form-control-lg" 
+                                                   placeholder="Search by name, code, or supplier..." 
+                                                   value="{{ query }}"
+                                                   data-search
+                                                   autocomplete="off"
+                                                   aria-describedby="searchHelp">
+                                            <div id="searchHelp" class="form-text">Search across fabric names, codes, and suppliers</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Construction Filter -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="constructionFilter" class="form-label fw-semibold">
+                                            <i class="bi bi-layers me-1"></i>
+                                            Construction
+                                        </label>
+                                        <select name="construction" 
+                                                id="constructionFilter" 
+                                                class="form-select form-select-lg"
+                                                aria-describedby="constructionHelp">
+                                            <option value="">All Constructions</option>
+                                            {% for construction in all_constructions %}
+                                                <option value="{{ construction }}" 
+                                                        {% if construction == selected_construction %}selected{% endif %}>
+                                                    {{ construction }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div id="constructionHelp" class="form-text">Filter by fabric construction type</div>
+                                    </div>
+                                    
+                                    <!-- Supplier Filter -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <label for="supplierFilter" class="form-label fw-semibold">
+                                            <i class="bi bi-building me-1"></i>
+                                            Supplier
+                                        </label>
+                                        <select name="supplier" 
+                                                id="supplierFilter" 
+                                                class="form-select form-select-lg"
+                                                aria-describedby="supplierHelp">
+                                            <option value="">All Suppliers</option>
+                                            {% for supplier in all_suppliers %}
+                                                <option value="{{ supplier }}" 
+                                                        {% if supplier == selected_supplier %}selected{% endif %}>
+                                                    {{ supplier }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <div id="supplierHelp" class="form-text">Filter by fabric supplier</div>
+                                    </div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="col-lg-2 col-md-6">
+                                        <label class="form-label fw-semibold text-transparent">Actions</label>
+                                        <div class="d-flex flex-column gap-2">
+                                            <button type="submit" 
+                                                    class="btn btn-primary btn-lg"
+                                                    data-loading-text="Filtering..."
+                                                    aria-label="Apply filters">
+                                                <i class="bi bi-funnel me-2"></i>
+                                                Filter
+                                            </button>
+                                            <a href="{% url 'masters:fabric_list' %}" 
+                                               class="btn btn-outline-secondary" 
+                                               hx-get="{% url 'masters:fabric_list' %}" 
+                                               hx-target="#main-content"
+                                               data-loading-text="Clearing..."
+                                               aria-label="Clear all filters">
+                                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                                Clear
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Active Filters Display -->
+                                {% if query or selected_construction or selected_supplier %}
+                                <div class="active-filters mt-3 pt-3 border-top">
+                                    <div class="d-flex align-items-center flex-wrap gap-2">
+                                        <span class="text-muted fw-semibold">Active filters:</span>
+                                        {% if query %}
+                                        <span class="badge bg-primary rounded-pill">
+                                            Search: "{{ query }}"
+                                            <a href="{% url 'masters:fabric_list' %}?construction={{ selected_construction }}&supplier={{ selected_supplier }}" 
+                                               class="text-white ms-1" 
+                                               aria-label="Remove search filter">
+                                                <i class="bi bi-x"></i>
+                                            </a>
+                                        </span>
+                                        {% endif %}
+                                        {% if selected_construction %}
+                                        <span class="badge bg-info rounded-pill">
+                                            Construction: {{ selected_construction }}
+                                            <a href="{% url 'masters:fabric_list' %}?q={{ query }}&supplier={{ selected_supplier }}" 
+                                               class="text-white ms-1" 
+                                               aria-label="Remove construction filter">
+                                                <i class="bi bi-x"></i>
+                                            </a>
+                                        </span>
+                                        {% endif %}
+                                        {% if selected_supplier %}
+                                        <span class="badge bg-success rounded-pill">
+                                            Supplier: {{ selected_supplier }}
+                                            <a href="{% url 'masters:fabric_list' %}?q={{ query }}&construction={{ selected_construction }}" 
+                                               class="text-white ms-1" 
+                                               aria-label="Remove supplier filter">
+                                                <i class="bi bi-x"></i>
+                                            </a>
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="results-info">
+                        <span class="text-muted">Showing results</span>
+                        {% if query or selected_construction or selected_supplier %}
+                        <span class="badge bg-secondary ms-2">Filtered</span>
+                        {% endif %}
+                    </div>
+                    <div class="results-actions">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Export options">
+                            <button type="button" class="btn btn-outline-secondary" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Export to Excel">
+                                <i class="bi bi-file-earmark-excel"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Export to PDF">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Print">
+                                <i class="bi bi-printer"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fabric List Container -->
+                <div id="fabric-list-container" class="animate-on-scroll">
+                    {% include 'masters/partials/fabric_list_partial.html' %}
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Enhanced JavaScript for this page -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // View toggle functionality
+    const viewButtons = document.querySelectorAll('[data-view]');
+    const fabricContainer = document.getElementById('fabric-list-container');
+    
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const view = this.getAttribute('data-view');
+            
+            // Update active button
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update container class
+            if (fabricContainer) {
+                fabricContainer.className = fabricContainer.className.replace(/view-\w+/g, '');
+                fabricContainer.classList.add(`view-${view}`);
+            }
+            
+            // Store preference
+            localStorage.setItem('fabric-view-preference', view);
+        });
+    });
+    
+    // Restore view preference
+    const savedView = localStorage.getItem('fabric-view-preference');
+    if (savedView) {
+        const button = document.querySelector(`[data-view="${savedView}"]`);
+        if (button) {
+            button.click();
+        }
+    }
+    
+    // Enhanced search functionality
+    const searchInput = document.getElementById('searchQuery');
+    if (searchInput) {
+        // Add search suggestions (if you have an endpoint for this)
+        searchInput.addEventListener('input', function() {
+            const query = this.value;
+            if (query.length >= 2) {
+                // You can implement search suggestions here
+                console.log('Search query:', query);
+            }
+        });
+    }
+    
+    // Stats cards animation
+    const statsCards = document.querySelectorAll('.stats-card');
+    statsCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('fade-in-up');
+    });
+});
+</script>
 {% endblock %}
