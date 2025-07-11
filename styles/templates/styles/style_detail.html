@@ -1,71 +1,129 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Style Detail</title>
-</head>
-<body>
-    <h1>{{ style.name }} ({{ style.code }})</h1>
-    <p>Category: {{ style.category }}</p>
-    {% if style.image %}
-        <img src="{{ style.image.url }}" alt="{{ style.name }}" width="200">
-    {% endif %}
-    <a href="{% url 'styles:style_update' style.pk %}">Edit</a>
-    <a href="{% url 'styles:style_delete' style.pk %}">Delete</a>
-    <a href="{% url 'styles:style_list' %}">Back to list</a>
+{% extends 'base.html' %}
+{% load styles_tags %}
 
-    <h2>Fabric Consumption</h2>
-    <a href="{% url 'styles:style_fabric_consumption_create' style.pk %}">Add Fabric Consumption</a>
-    {% if style.stylefabricconsumption_set.all %}
-        <ul>
-            {% for consumption in style.stylefabricconsumption_set.all %}
-                <li>
-                    {{ consumption.fabric.name }}: {{ consumption.quantity }} {{ consumption.unit }} (Unit Price: {{ consumption.fabric.unit_price }} | Cost: {{ consumption.quantity|mul:consumption.fabric.unit_price }})
-                    (<a href="{% url 'styles:style_fabric_consumption_update' style.pk consumption.pk %}">Edit</a> |
-                    <a href="{% url 'styles:style_fabric_consumption_delete' style.pk consumption.pk %}">Delete</a>)
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No fabric consumption defined for this style.</p>
-    {% endif %}
+{% block title %}Style Detail{% endblock %}
 
-    <h2>Accessory Consumption</h2>
-    <a href="{% url 'styles:style_accessory_consumption_create' style.pk %}">Add Accessory Consumption</a>
-    {% if style.styleaccessoryconsumption_set.all %}
-        <ul>
-            {% for consumption in style.styleaccessoryconsumption_set.all %}
-                <li>
-                    {{ consumption.accessory.name }}: {{ consumption.quantity }} {{ consumption.unit }} (Unit Price: {{ consumption.accessory.unit_price }} | Cost: {{ consumption.quantity|mul:consumption.accessory.unit_price }})
-                    (<a href="{% url 'styles:style_accessory_consumption_update' style.pk consumption.pk %}">Edit</a> |
-                    <a href="{% url 'styles:style_accessory_consumption_delete' style.pk consumption.pk %}">Delete</a>)
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No accessory consumption defined for this style.</p>
-    {% endif %}
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">{{ style.name }} <small class="text-muted">({{ style.code }})</small></h1>
+        <div>
+            <a href="{% url 'styles:style_update' style.pk %}" class="btn btn-primary btn-sm me-2">Edit Style</a>
+            <a href="{% url 'styles:style_delete' style.pk %}" class="btn btn-danger btn-sm me-2">Delete Style</a>
+            <a href="{% url 'styles:style_list' %}" class="btn btn-secondary btn-sm">Back to list</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Category:</strong> {{ style.category }}</p>
+                {% if style.image %}
+                    <p><strong>Image:</strong><br><img src="{{ style.image.url }}" class="img-fluid rounded" style="max-width: 200px;" alt="{{ style.name }}"></p>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h4 class="mt-0">Costing Summary</h4>
+                {% if style.stylecosting %}
+                    <p><strong>Total Fabric Cost:</strong> {{ style.stylecosting.total_fabric_cost }}</p>
+                    <p><strong>Total Accessory Cost:</strong> {{ style.stylecosting.total_accessory_cost }}</p>
+                    <p><strong>Total Cost:</strong> {{ style.stylecosting.total_cost }}</p>
+                    <p><strong>Margin/Markup:</strong> {{ style.stylecosting.margin_markup }}%</p>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        Costing not yet calculated for this style.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
-    <h2>Costing Summary</h2>
-    {% if style.stylecosting %}
-        <p>Total Fabric Cost: {{ style.stylecosting.total_fabric_cost }}</p>
-        <p>Total Accessory Cost: {{ style.stylecosting.total_accessory_cost }}</p>
-        <p>Total Cost: {{ style.stylecosting.total_cost }}</p>
-        <p>Margin/Markup: {{ style.stylecosting.margin_markup }}%</p>
-    {% else %}
-        <p>Costing not yet calculated for this style.</p>
-    {% endif %}
+        <h2 class="mt-4 mb-3">Fabric Consumption</h2>
+        <a href="{% url 'styles:style_fabric_consumption_create' style.pk %}" class="btn btn-success btn-sm mb-3">Add Fabric Consumption</a>
+        {% if style.stylefabricconsumption_set.all %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Fabric</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Unit Price</th>
+                            <th>Cost</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consumption in style.stylefabricconsumption_set.all %}
+                            <tr>
+                                <td>{{ consumption.fabric.name }}</td>
+                                <td>{{ consumption.quantity }}</td>
+                                <td>{{ consumption.unit }}</td>
+                                <td>{{ consumption.fabric.unit_price }}</td>
+                                <td>{{ consumption.quantity|mul:consumption.fabric.unit_price }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'styles:style_fabric_consumption_update' style.pk consumption.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'styles:style_fabric_consumption_delete' style.pk consumption.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No fabric consumption defined for this style.
+            </div>
+        {% endif %}
 
-    <h2>Associated Styles</h2>
-    {% if style.associated_styles.all %}
-        <ul>
-            {% for associated_style in style.associated_styles.all %}
-                <li>
-                    <a href="{% url 'styles:style_detail' associated_style.pk %}">{{ associated_style.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No associated styles.</p>
-    {% endif %}
-</body>
-</html>
+        <h2 class="mt-4 mb-3">Accessory Consumption</h2>
+        <a href="{% url 'styles:style_accessory_consumption_create' style.pk %}" class="btn btn-success btn-sm mb-3">Add Accessory Consumption</a>
+        {% if style.styleaccessoryconsumption_set.all %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Accessory</th>
+                            <th>Quantity</th>
+                            <th>Unit</th>
+                            <th>Unit Price</th>
+                            <th>Cost</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consumption in style.styleaccessoryconsumption_set.all %}
+                            <tr>
+                                <td>{{ consumption.accessory.name }}</td>
+                                <td>{{ consumption.quantity }}</td>
+                                <td>{{ consumption.unit }}</td>
+                                <td>{{ consumption.accessory.unit_price }}</td>
+                                <td>{{ consumption.quantity|mul:consumption.accessory.unit_price }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'styles:style_accessory_consumption_update' style.pk consumption.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'styles:style_accessory_consumption_delete' style.pk consumption.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No accessory consumption defined for this style.
+            </div>
+        {% endif %}
+
+        <h2 class="mt-4 mb-3">Associated Styles</h2>
+        {% if style.associated_styles.all %}
+            <ul class="list-group list-group-flush">
+                {% for associated_style in style.associated_styles.all %}
+                    <li class="list-group-item"><a href="{% url 'styles:style_detail' associated_style.pk %}">{{ associated_style.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No associated styles.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -3,12 +3,61 @@
 <head>
     <title>Purchase Order - {{ po.po_no }}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .header, .footer { text-align: center; margin-bottom: 20px; }
-        .po-details, .item-details { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .po-details th, .po-details td, .item-details th, .item-details td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        .po-details th, .item-details th { background-color: #f2f2f2; }
-        .total { text-align: right; font-weight: bold; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+            margin: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24pt;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .header h2 {
+            font-size: 18pt;
+            color: #34495e;
+            margin-top: 0;
+        }
+        .po-details, .item-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+        .po-details th, .po-details td, .item-details th, .item-details td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .po-details th, .item-details th {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .po-details tr:nth-child(even), .item-details tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+            padding-right: 12px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 9pt;
+            color: #7f8c8d;
+        }
+        h3 {
+            font-size: 14pt;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>

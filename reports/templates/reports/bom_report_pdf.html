@@ -4,35 +4,79 @@
     <title>BOM Report</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        h1 {
+            font-size: 20pt;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 16pt;
+            color: #34495e;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+        h3 {
+            font-size: 14pt;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+        h4 {
+            font-size: 12pt;
+            color: #34495e;
+            margin-bottom: 8px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #ecf0f1;
+            font-weight: bold;
+            color: #2c3e50;
         }
-        h1, h2, h3, h4 {
-            margin-bottom: 10px;
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .alert-info {
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+            color: #31708f;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>BOM Report</h1>
 
-    {% for entry in bom_entries %}
-        {% ifchanged entry.order %}
-            <h2>Order: {{ entry.order.order_no }}</h2>
-            <h3>Style: {{ entry.order.style.name }}</h3>
+    {% regroup bom_entries by order as order_list %}
+    {% for order_group in order_list %}
+        <h2>Order: {{ order_group.grouper.order_no }}</h2>
+        <h3>Style: {{ order_group.grouper.style.name }}</h3>
 
-            <h4>Fabrics</h4>
-            <table border="1">
+        <h4>Fabrics</h4>
+        {% if order_group.list|selectattr:"fabric" %}
+            <table>
                 <thead>
                     <tr>
                         <th>Fabric</th>
@@ -43,22 +87,26 @@
                     </tr>
                 </thead>
                 <tbody>
-        {% endifchanged %}
-        {% if entry.fabric %}
-            <tr>
-                <td>{{ entry.fabric.name }}</td>
-                <td>{{ entry.required_qty }}</td>
-                <td>{{ entry.issued_qty }}</td>
-                <td>{{ entry.balance }}</td>
-                <td>{{ entry.version.version_number }}</td>
-            </tr>
-        {% endif %}
-        {% ifchanged entry.order %}
+                    {% for entry in order_group.list %}
+                        {% if entry.fabric %}
+                            <tr>
+                                <td>{{ entry.fabric.name }}</td>
+                                <td>{{ entry.required_qty }}</td>
+                                <td>{{ entry.issued_qty }}</td>
+                                <td>{{ entry.balance }}</td>
+                                <td>{{ entry.version.version_number }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
+        {% else %}
+            <p class="alert-info">No fabric BOM for this order.</p>
+        {% endif %}
 
-            <h4>Accessories</h4>
-            <table border="1">
+        <h4>Accessories</h4>
+        {% if order_group.list|selectattr:"accessory" %}
+            <table>
                 <thead>
                     <tr>
                         <th>Accessory</th>
@@ -69,22 +117,24 @@
                     </tr>
                 </thead>
                 <tbody>
-        {% endifchanged %}
-        {% if entry.accessory %}
-            <tr>
-                <td>{{ entry.accessory.name }}</td>
-                <td>{{ entry.required_qty }}</td>
-                <td>{{ entry.issued_qty }}</td>
-                <td>{{ entry.balance }}</td>
-                <td>{{ entry.version.version_number }}</td>
-            </tr>
-        {% endif %}
-        {% if forloop.last %}
+                    {% for entry in order_group.list %}
+                        {% if entry.accessory %}
+                            <tr>
+                                <td>{{ entry.accessory.name }}</td>
+                                <td>{{ entry.required_qty }}</td>
+                                <td>{{ entry.issued_qty }}</td>
+                                <td>{{ entry.balance }}</td>
+                                <td>{{ entry.version.version_number }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
                 </tbody>
             </table>
+        {% else %}
+            <p class="alert-info">No accessory BOM for this order.</p>
         {% endif %}
     {% empty %}
-        <p>No BOM entries found for the selected filters.</p>
+        <p class="alert-info">No BOM entries found for the selected filters.</p>
     {% endfor %}
 </body>
 </html>

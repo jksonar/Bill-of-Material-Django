@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
 from django.http import HttpResponse
@@ -8,35 +9,35 @@ import csv
 from .models import Style, StyleFabricConsumption, StyleAccessoryConsumption
 from masters.models import Fabric, Accessory
 
-class StyleListView(ListView):
+class StyleListView(LoginRequiredMixin, ListView):
     model = Style
     template_name = 'styles/style_list.html'
     context_object_name = 'styles'
 
-class StyleCreateView(CreateView):
+class StyleCreateView(LoginRequiredMixin, CreateView):
     model = Style
     template_name = 'styles/style_form.html'
     fields = ['code', 'name', 'category', 'image']
     success_url = reverse_lazy('styles:style_list')
 
-class StyleDetailView(DetailView):
+class StyleDetailView(LoginRequiredMixin, DetailView):
     model = Style
     template_name = 'styles/style_detail.html'
     context_object_name = 'style'
 
-class StyleUpdateView(UpdateView):
+class StyleUpdateView(LoginRequiredMixin, UpdateView):
     model = Style
     template_name = 'styles/style_form.html'
     fields = ['code', 'name', 'category', 'image']
     success_url = reverse_lazy('styles:style_list')
 
-class StyleDeleteView(DeleteView):
+class StyleDeleteView(LoginRequiredMixin, DeleteView):
     model = Style
     template_name = 'styles/style_confirm_delete.html'
     success_url = reverse_lazy('styles:style_list')
 
 
-class StyleFabricConsumptionCreateView(CreateView):
+class StyleFabricConsumptionCreateView(LoginRequiredMixin, CreateView):
     model = StyleFabricConsumption
     template_name = 'styles/style_fabric_consumption_form.html'
     fields = ['fabric', 'quantity', 'unit']
@@ -48,7 +49,7 @@ class StyleFabricConsumptionCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('styles:style_detail', kwargs={'pk': self.kwargs['style_pk']})
 
-class StyleFabricConsumptionUpdateView(UpdateView):
+class StyleFabricConsumptionUpdateView(LoginRequiredMixin, UpdateView):
     model = StyleFabricConsumption
     template_name = 'styles/style_fabric_consumption_form.html'
     fields = ['fabric', 'quantity', 'unit']
@@ -56,7 +57,7 @@ class StyleFabricConsumptionUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('styles:style_detail', kwargs={'pk': self.kwargs['style_pk']})
 
-class StyleFabricConsumptionDeleteView(DeleteView):
+class StyleFabricConsumptionDeleteView(LoginRequiredMixin, DeleteView):
     model = StyleFabricConsumption
     template_name = 'styles/style_fabric_consumption_confirm_delete.html'
 
@@ -64,7 +65,7 @@ class StyleFabricConsumptionDeleteView(DeleteView):
         return reverse_lazy('styles:style_detail', kwargs={'pk': self.kwargs['style_pk']})
 
 
-class StyleAccessoryConsumptionCreateView(CreateView):
+class StyleAccessoryConsumptionCreateView(LoginRequiredMixin, CreateView):
     model = StyleAccessoryConsumption
     template_name = 'styles/style_accessory_consumption_form.html'
     fields = ['accessory', 'quantity', 'unit']
@@ -76,7 +77,7 @@ class StyleAccessoryConsumptionCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('styles:style_detail', kwargs={'pk': self.kwargs['style_pk']})
 
-class StyleAccessoryConsumptionUpdateView(UpdateView):
+class StyleAccessoryConsumptionUpdateView(LoginRequiredMixin, UpdateView):
     model = StyleAccessoryConsumption
     template_name = 'styles/style_accessory_consumption_form.html'
     fields = ['accessory', 'quantity', 'unit']
@@ -84,14 +85,14 @@ class StyleAccessoryConsumptionUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('styles:style_detail', kwargs={'pk': self.kwargs['style_pk']})
 
-class StyleAccessoryConsumptionDeleteView(DeleteView):
+class StyleAccessoryConsumptionDeleteView(LoginRequiredMixin, DeleteView):
     model = StyleAccessoryConsumption
     template_name = 'styles/style_accessory_consumption_confirm_delete.html'
 
     def get_success_url(self):
         return reverse_lazy('styles:style_detail', kwargs={'pk': self.kwargs['style_pk']})
 
-class ExportConsumptionView(View):
+class ExportConsumptionView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="consumption_report.xlsx"'
@@ -130,7 +131,7 @@ class ExportConsumptionView(View):
         workbook.save(response)
         return response
 
-class ImportConsumptionView(View):
+class ImportConsumptionView(LoginRequiredMixin, View):
     def get(self, request):
         form = ConsumptionUploadForm()
         return render(request, 'styles/import_consumption.html', {'form': form})

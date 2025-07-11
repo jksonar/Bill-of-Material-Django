@@ -1,15 +1,19 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Confirm Delete</title>
-</head>
-<body>
-    <h1>Delete Fabric</h1>
-    <p>Are you sure you want to delete "{{ fabric.name }}"?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Confirm Delete</button>
-    </form>
-    <a href="{% url 'masters:fabric_detail' fabric.pk %}">Cancel</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete Fabric{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="mb-0">Delete Fabric</h1>
+    </div>
+    <div class="card-body">
+        <p class="lead">Are you sure you want to delete the fabric "<strong>{{ fabric.name }}</strong>"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger me-2">Confirm Delete</button>
+            <a href="{% url 'masters:fabric_detail' fabric.pk %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

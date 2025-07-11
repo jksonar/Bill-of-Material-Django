@@ -1,77 +1,106 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Order List</title>
-</head>
-<body>
-    <h1>Order List</h1>
+{% extends 'base.html' %}
 
-    <form method="get" action="{% url 'orders:order_list' %}">
-        <input type="text" name="q" placeholder="Search by Order No, Customer, Style" value="{{ search_query }}">
-        <select name="status">
-            <option value="">All Statuses</option>
-            {% for status_value, status_label in all_statuses %}
-                <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
-            {% endfor %}
-        </select>
-        <input type="text" name="customer" placeholder="Filter by Customer" value="{{ selected_customer }}">
-        <input type="text" name="style" placeholder="Filter by Style" value="{{ selected_style }}">
-        <button type="submit">Filter</button>
-    </form>
+{% block title %}Order List{% endblock %}
 
-    <p><a href="{% url 'orders:order_create' %}">Create New Order</a></p>
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Order List</h1>
+        <a href="{% url 'orders:order_create' %}" class="btn btn-primary">Create New Order</a>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'orders:order_list' %}" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label for="searchQuery" class="form-label">Search</label>
+                    <input type="text" name="q" id="searchQuery" class="form-control" placeholder="Order No, Customer, Style" value="{{ search_query }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select name="status" id="statusFilter" class="form-select">
+                        <option value="">All Statuses</option>
+                        {% for status_value, status_label in all_statuses %}
+                            <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="customerFilter" class="form-label">Customer</label>
+                    <input type="text" name="customer" id="customerFilter" class="form-control" placeholder="Filter by Customer" value="{{ selected_customer }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="styleFilter" class="form-label">Style</label>
+                    <input type="text" name="style" id="styleFilter" class="form-control" placeholder="Filter by Style" value="{{ selected_style }}">
+                </div>
+                <div class="col-md-2 d-flex">
+                    <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
+                    <a href="{% url 'orders:order_list' %}" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
 
-    {% if orders %}
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Order No</th>
-                    <th>Customer</th>
-                    <th>Style</th>
-                    <th>Quantity</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                    <tr>
-                        <td>{{ order.order_no }}</td>
-                        <td>{{ order.customer }}</td>
-                        <td>{{ order.style.name }}</td>
-                        <td>{{ order.quantity }}</td>
-                        <td>{{ order.due_date }}</td>
-                        <td>{{ order.status }}</td>
-                        <td>
-                            <a href="{% url 'orders:order_detail' order.pk %}">View</a> |
-                            <a href="{% url 'orders:order_update' order.pk %}">Edit</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order No</th>
+                            <th>Customer</th>
+                            <th>Style</th>
+                            <th>Quantity</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.order_no }}</td>
+                                <td>{{ order.customer }}</td>
+                                <td>{{ order.style.name }}</td>
+                                <td>{{ order.quantity }}</td>
+                                <td>{{ order.due_date }}</td>
+                                <td><span class="badge bg-{{ order.status|lower }}">{{ order.get_status_display }}</span></td>
+                                <td class="text-end">
+                                    <a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-sm btn-outline-info me-1">View</a>
+                                    <a href="{% url 'orders:order_update' order.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page=1&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">&laquo; first</a>
-                    <a href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">previous</a>
-                {% endif %}
+            {% if page_obj.has_other_pages %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">&laquo; first</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">previous</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">&laquo; first</span></li>
+                            <li class="page-item disabled"><span class="page-link">previous</span></li>
+                        {% endif %}
 
-                <span class="current">
-                    Page {{ page_obj.number }} of {{ page_obj.num_pages }}.
-                </span>
+                        <li class="page-item active"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
 
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">next</a>
-                    <a href="?page={{ page_obj.num_pages }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&q={{ search_query }}&status={{ selected_status }}&customer={{ selected_customer }}&style={{ selected_style }}">last &raquo;</a></li>
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">next</span></li>
+                            <li class="page-item disabled"><span class="page-link">last &raquo;</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
 
-    {% else %}
-        <p>No orders found.</p>
-    {% endif %}
-</body>
-</html>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No orders found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

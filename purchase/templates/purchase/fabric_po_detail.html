@@ -1,32 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fabric PO Detail</title>
-</head>
-<body>
-    <h1>Purchase Order: {{ fabric_po.po_no }}</h1>
-    <p>Supplier: {{ fabric_po.supplier }}</p>
-    <p>Date: {{ fabric_po.date }}</p>
-    <p>Delivery Date: {{ fabric_po.delivery_date }}</p>
-    <p>Total Quantity: {{ fabric_po.total_qty }}</p>
-    <p>Status: {{ fabric_po.status }}</p>
+{% extends 'base.html' %}
 
-    <h2>Items</h2>
-    <a href="{% url 'purchase:fabric_po_item_create' fabric_po.pk %}">Add Item</a>
-    {% if items %}
-        <ul>
-            {% for item in items %}
-                <li>
-                    {{ item.fabric.name }}: {{ item.quantity }} @ {{ item.rate }}
-                    (<a href="{% url 'purchase:fabric_po_item_update' fabric_po.pk item.pk %}">Edit</a> |
-                    <a href="{% url 'purchase:fabric_po_item_delete' fabric_po.pk item.pk %}">Delete</a>)
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No items in this PO.</p>
-    {% endif %}
+{% block title %}Fabric PO Detail{% endblock %}
 
-    <a href="{% url 'purchase:fabric_po_list' %}">Back to PO List</a>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Purchase Order: {{ fabric_po.po_no }}</h1>
+        <div>
+            <a href="{% url 'purchase:fabric_po_update' fabric_po.pk %}" class="btn btn-primary btn-sm me-2">Edit PO</a>
+            <a href="{% url 'purchase:fabric_po_list' %}" class="btn btn-secondary btn-sm">Back to PO List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>Supplier:</strong> {{ fabric_po.supplier }}</p>
+                <p><strong>Date:</strong> {{ fabric_po.date }}</p>
+                <p><strong>Delivery Date:</strong> {{ fabric_po.delivery_date }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Total Quantity:</strong> {{ fabric_po.total_qty }}</p>
+                <p><strong>Status:</strong> <span class="badge bg-info">{{ fabric_po.get_status_display }}</span></p>
+            </div>
+        </div>
+
+        <h2 class="mt-4 mb-3">Items</h2>
+        <a href="{% url 'purchase:fabric_po_item_create' fabric_po.pk %}" class="btn btn-success btn-sm mb-3">Add Item</a>
+        {% if items %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Fabric</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.fabric.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>{{ item.rate }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'purchase:fabric_po_item_update' fabric_po.pk item.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'purchase:fabric_po_item_delete' fabric_po.pk item.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No items in this Purchase Order.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

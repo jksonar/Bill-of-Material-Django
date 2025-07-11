@@ -1,9 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from .models import FabricPO, FabricPOItem, FabricReceipt, FabricReceiptItem
 from django.db.models import Q
 
-class FabricPOListView(ListView):
+class FabricPOListView(LoginRequiredMixin, ListView):
     model = FabricPO
     template_name = 'purchase/fabric_po_list.html'
     context_object_name = 'fabric_pos'
@@ -21,13 +22,13 @@ class FabricPOListView(ListView):
         context['selected_status'] = self.request.GET.get('status', '')
         return context
 
-class FabricPOCreateView(CreateView):
+class FabricPOCreateView(LoginRequiredMixin, CreateView):
     model = FabricPO
     template_name = 'purchase/fabric_po_form.html'
     fields = ['po_no', 'supplier', 'delivery_date', 'status']
     success_url = reverse_lazy('purchase:fabric_po_list')
 
-class FabricPODetailView(DetailView):
+class FabricPODetailView(LoginRequiredMixin, DetailView):
     model = FabricPO
     template_name = 'purchase/fabric_po_detail.html'
     context_object_name = 'fabric_po'
@@ -37,19 +38,19 @@ class FabricPODetailView(DetailView):
         context['items'] = FabricPOItem.objects.filter(po=self.object)
         return context
 
-class FabricPOUpdateView(UpdateView):
+class FabricPOUpdateView(LoginRequiredMixin, UpdateView):
     model = FabricPO
     template_name = 'purchase/fabric_po_form.html'
     fields = ['po_no', 'supplier', 'delivery_date', 'status']
     success_url = reverse_lazy('purchase:fabric_po_list')
 
-class FabricPODeleteView(DeleteView):
+class FabricPODeleteView(LoginRequiredMixin, DeleteView):
     model = FabricPO
     template_name = 'purchase/fabric_po_confirm_delete.html'
     success_url = reverse_lazy('purchase:fabric_po_list')
 
 
-class FabricPOItemCreateView(CreateView):
+class FabricPOItemCreateView(LoginRequiredMixin, CreateView):
     model = FabricPOItem
     template_name = 'purchase/fabric_po_item_form.html'
     fields = ['fabric', 'quantity', 'rate']
@@ -61,7 +62,7 @@ class FabricPOItemCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('purchase:fabric_po_detail', kwargs={'pk': self.kwargs['po_pk']})
 
-class FabricPOItemUpdateView(UpdateView):
+class FabricPOItemUpdateView(LoginRequiredMixin, UpdateView):
     model = FabricPOItem
     template_name = 'purchase/fabric_po_item_form.html'
     fields = ['fabric', 'quantity', 'rate']
@@ -69,7 +70,7 @@ class FabricPOItemUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('purchase:fabric_po_detail', kwargs={'pk': self.kwargs['po_pk']})
 
-class FabricPOItemDeleteView(DeleteView):
+class FabricPOItemDeleteView(LoginRequiredMixin, DeleteView):
     model = FabricPOItem
     template_name = 'purchase/fabric_po_item_confirm_delete.html'
 
@@ -77,7 +78,7 @@ class FabricPOItemDeleteView(DeleteView):
         return reverse_lazy('purchase:fabric_po_detail', kwargs={'pk': self.kwargs['po_pk']})
 
 
-class FabricReceiptListView(ListView):
+class FabricReceiptListView(LoginRequiredMixin, ListView):
     model = FabricReceipt
     template_name = 'purchase/fabric_receipt_list.html'
     context_object_name = 'fabric_receipts'
@@ -99,13 +100,13 @@ class FabricReceiptListView(ListView):
         context['end_date'] = self.request.GET.get('end_date', '')
         return context
 
-class FabricReceiptCreateView(CreateView):
+class FabricReceiptCreateView(LoginRequiredMixin, CreateView):
     model = FabricReceipt
     template_name = 'purchase/fabric_receipt_form.html'
     fields = ['po_ref', 'grn_no']
     success_url = reverse_lazy('purchase:fabric_receipt_list')
 
-class FabricReceiptDetailView(DetailView):
+class FabricReceiptDetailView(LoginRequiredMixin, DetailView):
     model = FabricReceipt
     template_name = 'purchase/fabric_receipt_detail.html'
     context_object_name = 'fabric_receipt'
@@ -115,19 +116,19 @@ class FabricReceiptDetailView(DetailView):
         context['items'] = FabricReceiptItem.objects.filter(receipt=self.object)
         return context
 
-class FabricReceiptUpdateView(UpdateView):
+class FabricReceiptUpdateView(LoginRequiredMixin, UpdateView):
     model = FabricReceipt
     template_name = 'purchase/fabric_receipt_form.html'
     fields = ['po_ref', 'grn_no']
     success_url = reverse_lazy('purchase:fabric_receipt_list')
 
-class FabricReceiptDeleteView(DeleteView):
+class FabricReceiptDeleteView(LoginRequiredMixin, DeleteView):
     model = FabricReceipt
     template_name = 'purchase/fabric_receipt_confirm_delete.html'
     success_url = reverse_lazy('purchase:fabric_receipt_list')
 
 
-class FabricReceiptItemCreateView(CreateView):
+class FabricReceiptItemCreateView(LoginRequiredMixin, CreateView):
     model = FabricReceiptItem
     template_name = 'purchase/fabric_receipt_item_form.html'
     fields = ['fabric', 'quantity_received', 'damage_qty']
@@ -139,7 +140,7 @@ class FabricReceiptItemCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('purchase:fabric_receipt_detail', kwargs={'pk': self.kwargs['receipt_pk']})
 
-class FabricReceiptItemUpdateView(UpdateView):
+class FabricReceiptItemUpdateView(LoginRequiredMixin, UpdateView):
     model = FabricReceiptItem
     template_name = 'purchase/fabric_receipt_item_form.html'
     fields = ['fabric', 'quantity_received', 'damage_qty']
@@ -147,7 +148,7 @@ class FabricReceiptItemUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('purchase:fabric_receipt_detail', kwargs={'pk': self.kwargs['receipt_pk']})
 
-class FabricReceiptItemDeleteView(DeleteView):
+class FabricReceiptItemDeleteView(LoginRequiredMixin, DeleteView):
     model = FabricReceiptItem
     template_name = 'purchase/fabric_receipt_item_confirm_delete.html'
 

@@ -1,41 +1,37 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<div class="container-fluid">
-    <h1 class="h3 mb-2 text-gray-800">Style Costing Report</h1>
-    <p class="mb-4">Detailed report of style costing including material costs, production costs, and overheads.</p>
+{% block title %}Style Costing Report{% endblock %}
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Filter Options</h6>
-        </div>
-        <div class="card-body">
-            <form method="GET" class="form-inline">
-                <div class="form-group mr-3">
-                    <label for="style_filter" class="mr-2">Style:</label>
-                    <select name="style" id="style_filter" class="form-control">
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="mb-0">Style Costing Report</h1>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="style_filter" class="form-label">Filter by Style:</label>
+                    <select name="style" id="style_filter" class="form-select">
                         <option value="">-- Select Style --</option>
                         {% for style in all_styles %}
                             <option value="{{ style.id }}" {% if style.id|stringformat:"s" == selected_style %}selected{% endif %}>{{ style.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary mr-2">Apply Filter</button>
-                <a href="{% url 'reports:style_costing_report' %}" class="btn btn-secondary mr-2">Clear Filter</a>
-                <button type="submit" name="export_csv" value="true" class="btn btn-success"><i class="fas fa-file-csv"></i> Export CSV</button>
-                <button type="submit" name="export_pdf" value="true" class="btn btn-danger ml-2"><i class="fas fa-file-pdf"></i> Export PDF</button>
-            </form>
-        </div>
-    </div>
+                <div class="col-md-8 text-end">
+                    <button type="submit" class="btn btn-primary me-2">Apply Filter</button>
+                    <a href="{% url 'reports:style_costing_report' %}" class="btn btn-outline-secondary me-2">Clear Filter</a>
+                    <button type="submit" name="export_csv" value="true" class="btn btn-success me-2">Export CSV</button>
+                    <button type="submit" name="export_pdf" value="true" class="btn btn-danger">Export PDF</button>
+                </div>
+            </div>
+        </form>
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Style Costing Details</h6>
-        </div>
-        <div class="card-body">
+        {% if style_costings %}
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                <table class="table table-hover table-striped align-middle">
+                    <thead class="table-dark">
                         <tr>
                             <th>Style Name</th>
                             <th>Currency</th>
@@ -63,15 +59,15 @@
                             <td>{{ costing.landed_cost }}</td>
                             <td>{{ costing.retail_price }}</td>
                         </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="10" class="text-center">No style costing data available.</td>
-                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No style costing data available for the selected filters.
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

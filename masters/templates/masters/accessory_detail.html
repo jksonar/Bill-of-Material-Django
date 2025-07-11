@@ -1,16 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Accessory Detail</title>
-</head>
-<body>
-    <h1>{{ accessory.name }}</h1>
-    <p>Code: {{ accessory.code }}</p>
-    <p>Type: {{ accessory.type }}</p>
-    <p>Supplier: {{ accessory.supplier }}</p>
-    <p>Usage Notes: {{ accessory.usage_notes }}</p>
-    <a href="{% url 'masters:accessory_update' accessory.pk %}">Edit</a>
-    <a href="{% url 'masters:accessory_delete' accessory.pk %}">Delete</a>
-    <a href="{% url 'masters:accessory_list' %}">Back to list</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Accessory Detail{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">{{ accessory.name }} <small class="text-muted">({{ accessory.code }})</small></h1>
+        <div>
+            {% if perms.masters.change_accessory %}
+                <a href="{% url 'masters:accessory_update' accessory.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+            {% endif %}
+            {% if perms.masters.delete_accessory %}
+                <a href="{% url 'masters:accessory_delete' accessory.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Description:</strong> {{ accessory.description }}</p>
+                <p><strong>Finish:</strong> {{ accessory.finish }}</p>
+                <p><strong>Supplier:</strong> {{ accessory.supplier }}</p>
+                <p><strong>Price:</strong> {{ accessory.price }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Weight:</strong> {{ accessory.weight }} {{ accessory.unit }}</p>
+                <p><strong>Lead Time:</strong> {{ accessory.lead_time }} days</p>
+                <p><strong>Stock:</strong> {{ accessory.stock }}</p>
+                {% if accessory.image %}
+                    <p><strong>Image:</strong><br><img src="{{ accessory.image.url }}" class="img-fluid rounded" style="max-width: 200px;" alt="{{ accessory.name }}"></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-end">
+        <a href="{% url 'masters:accessory_list' %}" class="btn btn-secondary">Back to list</a>
+    </div>
+</div>
+{% endblock %}

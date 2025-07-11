@@ -1,46 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Order</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        form div { margin-bottom: 10px; }
-        label { display: inline-block; width: 120px; }
-        input[type="text"], input[type="number"], input[type="date"], select { width: 200px; padding: 5px; }
-        button { padding: 8px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        button:hover { background-color: #45a049; }
-    </style>
-</head>
-<body>
-    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Order</h1>
-    <form method="post">
-        {% csrf_token %}
-        <div>
-            <label for="{{ form.order_no.id_for_label }}">Order No:</label>
-            {{ form.order_no }}
-        </div>
-        <div>
-            <label for="{{ form.customer.id_for_label }}">Customer:</label>
-            {{ form.customer }}
-        </div>
-        <div>
-            <label for="{{ form.style.id_for_label }}">Style:</label>
-            {{ form.style }}
-        </div>
-        <div>
-            <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
-            {{ form.quantity }}
-        </div>
-        <div>
-            <label for="{{ form.due_date.id_for_label }}">Due Date:</label>
-            {{ form.due_date }}
-        </div>
-        <div>
-            <label for="{{ form.status.id_for_label }}">Status:</label>
-            {{ form.status }}
-        </div>
-        <button type="submit">Save</button>
-    </form>
-    <p><a href="{% url 'orders:order_list' %}">Back to Order List</a></p>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Order{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="mb-0">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Order</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    {{ field.label_tag }}
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'orders:order_list' %}" class="btn btn-secondary">Back to Order List</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

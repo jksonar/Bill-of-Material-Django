@@ -1,42 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fabric List</title>
-</head>
-<body>
-    <h1>Fabric List</h1>
-    {% if perms.masters.add_fabric %}
-        <a href="{% url 'masters:fabric_create' %}">Add New Fabric</a>
-    {% endif %}
+{% extends 'base.html' %}
 
-    <form method="get" action="{% url 'masters:fabric_list' %}">
-        <input type="text" name="q" placeholder="Search by name, code, supplier" value="{{ query }}">
-        <select name="type">
-            <option value="">All Types</option>
-            {% for type in all_types %}
-                <option value="{{ type }}" {% if type == selected_type %}selected{% endif %}>{{ type }}</option>
-            {% endfor %}
-        </select>
-        <select name="supplier">
-            <option value="">All Suppliers</option>
-            {% for supplier in all_suppliers %}
-                <option value="{{ supplier }}" {% if supplier == selected_supplier %}selected{% endif %}>{{ supplier }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Search & Filter</button>
-    </form>
+{% block title %}Fabric List{% endblock %}
 
-    <ul>
-        {% for fabric in fabrics %}
-            <li>
-                <a href="{% url 'masters:fabric_detail' fabric.pk %}">{{ fabric.name }}</a>
-                ({% if perms.masters.change_fabric %}<a href="{% url 'masters:fabric_update' fabric.pk %}">Edit</a>{% endif %}
-                {% if perms.masters.change_fabric and perms.masters.delete_fabric %} | {% endif %}
-                {% if perms.masters.delete_fabric %}<a href="{% url 'masters:fabric_delete' fabric.pk %}">Delete</a>{% endif %})
-            </li>
-        {% empty %}
-            <li>No fabrics found.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Fabric List</h1>
+        {% if perms.masters.add_fabric %}
+            <a href="{% url 'masters:fabric_create' %}" class="btn btn-primary">Add New Fabric</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'masters:fabric_list' %}" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="searchQuery" class="form-label">Search</label>
+                    <input type="text" name="q" id="searchQuery" class="form-control" placeholder="Name, code, supplier" value="{{ query }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="constructionFilter" class="form-label">Construction</label>
+                    <select name="construction" id="constructionFilter" class="form-select">
+                        <option value="">All Constructions</option>
+                        {% for construction in all_constructions %}
+                            <option value="{{ construction }}" {% if construction == selected_construction %}selected{% endif %}>{{ construction }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="supplierFilter" class="form-label">Supplier</label>
+                    <select name="supplier" id="supplierFilter" class="form-select">
+                        <option value="">All Suppliers</option>
+                        {% for supplier in all_suppliers %}
+                            <option value="{{ supplier }}" {% if supplier == selected_supplier %}selected{% endif %}>{{ supplier }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex">
+                    <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
+                    <a href="{% url 'masters:fabric_list' %}" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+
+        {% if fabrics %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Construction</th>
+                            <th>Supplier</th>
+                            <th>Unit Price</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fabric in fabrics %}
+                            <tr>
+                                <td><a href="{% url 'masters:fabric_detail' fabric.pk %}" class="text-decoration-none">{{ fabric.name }}</a></td>
+                                <td>{{ fabric.code }}</td>
+                                <td>{{ fabric.construction }}</td>
+                                <td>{{ fabric.supplier }}</td>
+                                <td>{{ fabric.unit_price }}</td>
+                                <td class="text-end">
+                                    {% if perms.masters.change_fabric %}
+                                        <a href="{% url 'masters:fabric_update' fabric.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    {% endif %}
+                                    {% if perms.masters.delete_fabric %}
+                                        <a href="{% url 'masters:fabric_delete' fabric.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No fabrics found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

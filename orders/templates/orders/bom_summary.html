@@ -1,33 +1,80 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>BOM Summary</title>
-</head>
-<body>
-    <h1>BOM Summary</h1>
+{% extends 'base.html' %}
 
-    <h2>Fabric BOM Summary</h2>
-    {% if all_bom_fabrics %}
-        <ul>
-            {% for bom_fabric in all_bom_fabrics %}
-                <li>Order: {{ bom_fabric.order.order_no }}, Fabric: {{ bom_fabric.fabric.name }}, Required: {{ bom_fabric.required_qty }}, Issued: {{ bom_fabric.issued_qty }}, Balance: {{ bom_fabric.balance }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No fabric BOM entries.</p>
-    {% endif %}
+{% block title %}BOM Summary{% endblock %}
 
-    <h2>Accessory BOM Summary</h2>
-    {% if all_bom_accessories %}
-        <ul>
-            {% for bom_accessory in all_bom_accessories %}
-                <li>Order: {{ bom_accessory.order.order_no }}, Accessory: {{ bom_accessory.accessory.name }}, Required: {{ bom_accessory.required_qty }}, Issued: {{ bom_accessory.issued_qty }}, Balance: {{ bom_accessory.balance }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No accessory BOM entries.</p>
-    {% endif %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="mb-0">BOM Summary</h1>
+    </div>
+    <div class="card-body">
+        <h2 class="mt-4 mb-3">Fabric BOM Summary</h2>
+        {% if all_bom_fabrics %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order No</th>
+                            <th>Fabric</th>
+                            <th>Required Qty</th>
+                            <th>Issued Qty</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bom_fabric in all_bom_fabrics %}
+                            <tr>
+                                <td>{{ bom_fabric.order.order_no }}</td>
+                                <td>{{ bom_fabric.fabric.name }}</td>
+                                <td>{{ bom_fabric.required_qty }}</td>
+                                <td>{{ bom_fabric.issued_qty }}</td>
+                                <td>{{ bom_fabric.balance }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No fabric BOM entries.
+            </div>
+        {% endif %}
 
-    <a href="{% url 'orders:order_list' %}">Back to Order List</a>
-</body>
-</html>
+        <h2 class="mt-4 mb-3">Accessory BOM Summary</h2>
+        {% if all_bom_accessories %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order No</th>
+                            <th>Accessory</th>
+                            <th>Required Qty</th>
+                            <th>Issued Qty</th>
+                            <th>Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bom_accessory in all_bom_accessories %}
+                            <tr>
+                                <td>{{ bom_accessory.order.order_no }}</td>
+                                <td>{{ bom_accessory.accessory.name }}</td>
+                                <td>{{ bom_accessory.required_qty }}</td>
+                                <td>{{ bom_accessory.issued_qty }}</td>
+                                <td>{{ bom_accessory.balance }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No accessory BOM entries.
+            </div>
+        {% endif %}
+
+        <div class="mt-4 text-end">
+            <a href="{% url 'orders:order_list' %}" class="btn btn-secondary">Back to Order List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

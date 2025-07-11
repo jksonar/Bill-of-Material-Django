@@ -1,15 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fabric Receipt Form</title>
-</head>
-<body>
-    <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Fabric Receipt</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-    <a href="{% url 'purchase:fabric_receipt_list' %}">Back to Receipt List</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Create{% endif %} Fabric Receipt{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h1 class="mb-0">{% if form.instance.pk %}Edit{% else %}Create{% endif %} Fabric Receipt</h1>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="mb-3">
+                    {{ field.label_tag }}
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="{% url 'purchase:fabric_receipt_list' %}" class="btn btn-secondary">Back to Receipt List</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

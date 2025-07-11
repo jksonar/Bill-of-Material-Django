@@ -1,33 +1,65 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fabric PO List</title>
-</head>
-<body>
-    <h1>Fabric Purchase Orders</h1>
-    <a href="{% url 'purchase:fabric_po_create' %}">Create New PO</a>
+{% extends 'base.html' %}
 
-    <form method="get" action="{% url 'purchase:fabric_po_list' %}">
-        <label for="status">Filter by Status:</label>
-        <select name="status" id="status">
-            <option value="">All</option>
-            {% for status_value, status_label in all_statuses %}
-                <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Filter</button>
-    </form>
+{% block title %}Fabric PO List{% endblock %}
 
-    <ul>
-        {% for po in fabric_pos %}
-            <li>
-                <a href="{% url 'purchase:fabric_po_detail' po.pk %}">{{ po.po_no }} - {{ po.supplier }} ({{ po.status }})</a>
-                (<a href="{% url 'purchase:fabric_po_update' po.pk %}">Edit</a> |
-                <a href="{% url 'purchase:fabric_po_delete' po.pk %}">Delete</a>)
-            </li>
-        {% empty %}
-            <li>No fabric purchase orders found.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Fabric Purchase Orders</h1>
+        <a href="{% url 'purchase:fabric_po_create' %}" class="btn btn-primary">Create New PO</a>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'purchase:fabric_po_list' %}" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select name="status" id="statusFilter" class="form-select">
+                        <option value="">All</option>
+                        {% for status_value, status_label in all_statuses %}
+                            <option value="{{ status_value }}" {% if status_value == selected_status %}selected{% endif %}>{{ status_label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex">
+                    <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
+                    <a href="{% url 'purchase:fabric_po_list' %}" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+
+        {% if fabric_pos %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>PO No</th>
+                            <th>Supplier</th>
+                            <th>Delivery Date</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for po in fabric_pos %}
+                            <tr>
+                                <td><a href="{% url 'purchase:fabric_po_detail' po.pk %}" class="text-decoration-none">{{ po.po_no }}</a></td>
+                                <td>{{ po.supplier }}</td>
+                                <td>{{ po.delivery_date }}</td>
+                                <td><span class="badge bg-{{ po.status|lower }}">{{ po.get_status_display }}</span></td>
+                                <td class="text-end">
+                                    <a href="{% url 'purchase:fabric_po_update' po.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'purchase:fabric_po_delete' po.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No fabric purchase orders found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

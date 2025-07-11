@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, View
 from orders.models import BOMFabric, BOMAccessory, Order, BOMVersion
 from styles.models import Style, StyleCosting
@@ -14,7 +15,7 @@ from xhtml2pdf import pisa
 from io import BytesIO
 import openpyxl
 
-class BOMReportView(ListView):
+class BOMReportView(LoginRequiredMixin, ListView):
     template_name = 'reports/bom_report.html'
     context_object_name = 'bom_entries'
 
@@ -179,7 +180,7 @@ class BOMReportView(ListView):
         return super().get(request, *args, **kwargs)
 
 
-class BOMDiffView(View):
+class BOMDiffView(LoginRequiredMixin, View):
     template_name = 'reports/bom_diff.html'
 
     def get(self, request, *args, **kwargs):
@@ -290,7 +291,7 @@ class BOMDiffView(View):
         }
         return render(request, self.template_name, context)
 
-class PurchaseOrderReportView(ListView):
+class PurchaseOrderReportView(LoginRequiredMixin, ListView):
     template_name = 'reports/purchase_order_report.html'
     context_object_name = 'purchase_orders'
 
@@ -334,7 +335,7 @@ class PurchaseOrderReportView(ListView):
             return super().get(request, *args, **kwargs)
         return super().get(request, *args, **kwargs)
 
-class PurchaseReceiptReportView(ListView):
+class PurchaseReceiptReportView(LoginRequiredMixin, ListView):
     template_name = 'reports/purchase_receipt_report.html'
     context_object_name = 'purchase_receipts'
 
@@ -452,7 +453,7 @@ class PurchaseReceiptReportView(ListView):
             return super().get(request, *args, **kwargs)
         return super().get(request, *args, **kwargs)
 
-class StyleCostingReportView(ListView):
+class StyleCostingReportView(LoginRequiredMixin, ListView):
     model = StyleCosting
     template_name = 'reports/style_costing_report.html'
     context_object_name = 'style_costings'

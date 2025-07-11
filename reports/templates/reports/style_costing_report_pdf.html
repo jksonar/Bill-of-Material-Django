@@ -3,53 +3,95 @@
 <head>
     <title>Style Costing Report</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        h1 { color: #333; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .text-center { text-align: center; }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+            margin: 20px;
+        }
+        h1 {
+            font-size: 20pt;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #ecf0f1;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .alert-info {
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+            color: #31708f;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Style Costing Report</h1>
     <p>Detailed report of style costing including material costs, production costs, and overheads.</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Style Name</th>
-                <th>Currency</th>
-                <th>Exchange Rate</th>
-                <th>Total Fabric Cost</th>
-                <th>Total Accessory Cost</th>
-                <th>Total Cost</th>
-                <th>Margin/Markup (%)</th>
-                <th>Discount (%)</th>
-                <th>Landed Cost</th>
-                <th>Retail Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for costing in style_costings %}
-            <tr>
-                <td>{{ costing.style.name }}</td>
-                <td>{{ costing.currency.code|default:"N/A" }}</td>
-                <td>{{ costing.exchange_rate }}</td>
-                <td>{{ costing.total_fabric_cost }}</td>
-                <td>{{ costing.total_accessory_cost }}</td>
-                <td>{{ costing.total_cost }}</td>
-                <td>{{ costing.margin_markup }}</td>
-                <td>{{ costing.discount }}</td>
-                <td>{{ costing.landed_cost }}</td>
-                <td>{{ costing.retail_price }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="10" class="text-center">No style costing data available.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if style_costings %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Style Name</th>
+                    <th>Currency</th>
+                    <th>Exchange Rate</th>
+                    <th>Total Fabric Cost</th>
+                    <th>Total Accessory Cost</th>
+                    <th>Total Cost</th>
+                    <th>Margin/Markup (%)</th>
+                    <th>Discount (%)</th>
+                    <th>Landed Cost</th>
+                    <th>Retail Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for costing in style_costings %}
+                <tr>
+                    <td>{{ costing.style.name }}</td>
+                    <td>{{ costing.currency.code|default:"N/A" }}</td>
+                    <td>{{ costing.exchange_rate }}</td>
+                    <td>{{ costing.total_fabric_cost }}</td>
+                    <td>{{ costing.total_accessory_cost }}</td>
+                    <td>{{ costing.total_cost }}</td>
+                    <td>{{ costing.margin_markup }}</td>
+                    <td>{{ costing.discount }}</td>
+                    <td>{{ costing.landed_cost }}</td>
+                    <td>{{ costing.retail_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="alert-info">No style costing data available.</p>
+    {% endif %}
 </body>
 </html>

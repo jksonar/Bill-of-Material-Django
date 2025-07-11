@@ -1,10 +1,11 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, UpdateView, TemplateView, CreateView
 from django.urls import reverse_lazy
 from .models import Order, BOMFabric, BOMAccessory, BOMVersion
 from styles.models import Style
 from django.db.models import Q
 
-class OrderListView(ListView):
+class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'orders/order_list.html'
     context_object_name = 'orders'
@@ -40,13 +41,13 @@ class OrderListView(ListView):
         context['search_query'] = self.request.GET.get('q', '')
         return context
 
-class OrderCreateView(CreateView):
+class OrderCreateView(LoginRequiredMixin, CreateView):
     model = Order
     template_name = 'orders/order_form.html'
     fields = ['order_no', 'customer', 'style', 'quantity', 'due_date', 'status']
     success_url = reverse_lazy('orders:order_list')
 
-class OrderDetailView(DetailView):
+class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
     template_name = 'orders/order_detail.html'
     context_object_name = 'order'
@@ -88,13 +89,13 @@ class OrderDetailView(DetailView):
 
         return context
 
-class OrderUpdateView(UpdateView):
+class OrderUpdateView(LoginRequiredMixin, UpdateView):
     model = Order
     template_name = 'orders/order_form.html'
     fields = ['order_no', 'customer', 'style', 'quantity', 'due_date', 'status']
     success_url = reverse_lazy('orders:order_list')
 
-class BOMFabricUpdateView(UpdateView):
+class BOMFabricUpdateView(LoginRequiredMixin, UpdateView):
     model = BOMFabric
     template_name = 'orders/bom_fabric_form.html'
     fields = ['issued_qty', 'balance']
@@ -102,7 +103,7 @@ class BOMFabricUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk})
 
-class BOMAccessoryUpdateView(UpdateView):
+class BOMAccessoryUpdateView(LoginRequiredMixin, UpdateView):
     model = BOMAccessory
     template_name = 'orders/bom_accessory_form.html'
     fields = ['issued_qty', 'balance']
@@ -110,7 +111,7 @@ class BOMAccessoryUpdateView(UpdateView):
     def get_success_url(self):
         return reverse_lazy('orders:order_detail', kwargs={'pk': self.object.order.pk})
 
-class BOMSummaryView(TemplateView):
+class BOMSummaryView(LoginRequiredMixin, TemplateView):
     template_name = 'orders/bom_summary.html'
 
     def get_context_data(self, **kwargs):

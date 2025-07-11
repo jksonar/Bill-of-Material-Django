@@ -1,29 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fabric Receipt Detail</title>
-</head>
-<body>
-    <h1>Fabric Receipt: {{ fabric_receipt.grn_no }}</h1>
-    <p>PO Reference: {{ fabric_receipt.po_ref.po_no }}</p>
-    <p>Receipt Date: {{ fabric_receipt.receipt_date }}</p>
+{% extends 'base.html' %}
 
-    <h2>Items</h2>
-    <a href="{% url 'purchase:fabric_receipt_item_create' fabric_receipt.pk %}">Add Item</a>
-    {% if items %}
-        <ul>
-            {% for item in items %}
-                <li>
-                    {{ item.fabric.name }}: Received - {{ item.quantity_received }}, Damaged - {{ item.damage_qty }}
-                    (<a href="{% url 'purchase:fabric_receipt_item_update' fabric_receipt.pk item.pk %}">Edit</a> |
-                    <a href="{% url 'purchase:fabric_receipt_item_delete' fabric_receipt.pk item.pk %}">Delete</a>)
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No items in this receipt.</p>
-    {% endif %}
+{% block title %}Fabric Receipt Detail{% endblock %}
 
-    <a href="{% url 'purchase:fabric_receipt_list' %}">Back to Receipt List</a>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Fabric Receipt: {{ fabric_receipt.grn_no }}</h1>
+        <div>
+            <a href="{% url 'purchase:fabric_receipt_update' fabric_receipt.pk %}" class="btn btn-primary btn-sm me-2">Edit Receipt</a>
+            <a href="{% url 'purchase:fabric_receipt_list' %}" class="btn btn-secondary btn-sm">Back to Receipt List</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <p><strong>PO Reference:</strong> {{ fabric_receipt.po_ref.po_no }}</p>
+                <p><strong>Receipt Date:</strong> {{ fabric_receipt.receipt_date }}</p>
+            </div>
+        </div>
+
+        <h2 class="mt-4 mb-3">Items</h2>
+        <a href="{% url 'purchase:fabric_receipt_item_create' fabric_receipt.pk %}" class="btn btn-success btn-sm mb-3">Add Item</a>
+        {% if items %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Fabric</th>
+                            <th>Quantity Received</th>
+                            <th>Damage Quantity</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>{{ item.fabric.name }}</td>
+                                <td>{{ item.quantity_received }}</td>
+                                <td>{{ item.damage_qty }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'purchase:fabric_receipt_item_update' fabric_receipt.pk item.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'purchase:fabric_receipt_item_delete' fabric_receipt.pk item.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No items in this receipt.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

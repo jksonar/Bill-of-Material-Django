@@ -1,28 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fabric Receipt List</title>
-</head>
-<body>
-    <h1>Fabric Receipts</h1>
-    <a href="{% url 'purchase:fabric_receipt_create' %}">Create New Receipt</a>
+{% extends 'base.html' %}
 
-    <form method="get" action="{% url 'purchase:fabric_receipt_list' %}">
-        Start Date: <input type="date" name="start_date" value="{{ start_date }}">
-        End Date: <input type="date" name="end_date" value="{{ end_date }}">
-        <button type="submit">Filter</button>
-    </form>
+{% block title %}Fabric Receipt List{% endblock %}
 
-    <ul>
-        {% for receipt in fabric_receipts %}
-            <li>
-                <a href="{% url 'purchase:fabric_receipt_detail' receipt.pk %}">{{ receipt.grn_no }} - PO: {{ receipt.po_ref.po_no }} ({{ receipt.receipt_date }})</a>
-                (<a href="{% url 'purchase:fabric_receipt_update' receipt.pk %}">Edit</a> |
-                <a href="{% url 'purchase:fabric_receipt_delete' receipt.pk %}">Delete</a>)
-            </li>
-        {% empty %}
-            <li>No fabric receipts found.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Fabric Receipts</h1>
+        <a href="{% url 'purchase:fabric_receipt_create' %}" class="btn btn-primary">Create New Receipt</a>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'purchase:fabric_receipt_list' %}" class="mb-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="startDate" class="form-label">Start Date</label>
+                    <input type="date" name="start_date" id="startDate" class="form-control" value="{{ start_date }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="endDate" class="form-label">End Date</label>
+                    <input type="date" name="end_date" id="endDate" class="form-control" value="{{ end_date }}">
+                </div>
+                <div class="col-md-2 d-flex">
+                    <button type="submit" class="btn btn-secondary flex-grow-1 me-2">Filter</button>
+                    <a href="{% url 'purchase:fabric_receipt_list' %}" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+
+        {% if fabric_receipts %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>GRN No</th>
+                            <th>PO Reference</th>
+                            <th>Receipt Date</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for receipt in fabric_receipts %}
+                            <tr>
+                                <td><a href="{% url 'purchase:fabric_receipt_detail' receipt.pk %}" class="text-decoration-none">{{ receipt.grn_no }}</a></td>
+                                <td>{{ receipt.po_ref.po_no }}</td>
+                                <td>{{ receipt.receipt_date }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'purchase:fabric_receipt_update' receipt.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'purchase:fabric_receipt_delete' receipt.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No fabric receipts found matching your criteria.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

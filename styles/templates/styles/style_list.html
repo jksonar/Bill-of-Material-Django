@@ -1,24 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Style List</title>
-</head>
-<body>
-    <h1>Style List</h1>
-    <a href="{% url 'styles:style_create' %}">Add New Style</a>
-    <a href="{% url 'styles:export_consumption' %}">Export Consumption</a>
-    <a href="{% url 'styles:import_consumption' %}">Import Consumption</a>
-    <a href="{% url 'reports:style_costing_report' %}">Costing Report</a>
-    <ul>
-        {% for style in styles %}
-            <li>
-                <a href="{% url 'styles:style_detail' style.pk %}">{{ style.name }}</a>
-                (<a href="{% url 'styles:style_update' style.pk %}">Edit</a> |
-                <a href="{% url 'styles:style_delete' style.pk %}">Delete</a>)
-            </li>
-        {% empty %}
-            <li>No styles found.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Style List{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="mb-0">Style List</h1>
+        <div>
+            <a href="{% url 'styles:style_create' %}" class="btn btn-primary me-2">Add New Style</a>
+            <a href="{% url 'styles:export_consumption' %}" class="btn btn-info me-2">Export Consumption</a>
+            <a href="{% url 'styles:import_consumption' %}" class="btn btn-info me-2">Import Consumption</a>
+            <a href="{% url 'reports:style_costing_report' %}" class="btn btn-secondary">Costing Report</a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if styles %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Image</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for style in styles %}
+                            <tr>
+                                <td>{{ style.code }}</td>
+                                <td><a href="{% url 'styles:style_detail' style.pk %}" class="text-decoration-none">{{ style.name }}</a></td>
+                                <td>{{ style.category }}</td>
+                                <td>
+                                    {% if style.image %}
+                                        <img src="{{ style.image.url }}" alt="{{ style.name }}" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td class="text-end">
+                                    <a href="{% url 'styles:style_update' style.pk %}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+                                    <a href="{% url 'styles:style_delete' style.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                No styles found.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
