@@ -43,9 +43,15 @@ INSTALLED_APPS = [
     'orders',
     'purchase',
     'reports',
-    'guardian',
     'dashboard',
+    'user_management',
+    # Third party apps
+    'guardian',
     'django_htmx',
+    'django_tables2',
+    'django_filters',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -139,3 +145,38 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard:dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Crispy Forms Configuration
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Media files (User uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Static files configuration
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# Django Tables2 Configuration
+DJANGO_TABLES2_TEMPLATE = 'django_tables2/bootstrap5.html'
+
+# Report Generation Settings
+REPORT_OUTPUT_DIR = BASE_DIR / 'reports_output'
+REPORT_OUTPUT_DIR.mkdir(exist_ok=True)
+
+# File Upload Settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+
+# Pagination Settings
+PAGINATE_BY = 25
+
+# Cache Configuration (for development)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}

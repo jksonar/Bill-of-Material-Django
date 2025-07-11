@@ -150,7 +150,7 @@ class AccessoryListView(PermissionRequiredMixin, ListView):
         context['selected_finish'] = self.request.GET.get('finish', '')
         context['selected_supplier'] = self.request.GET.get('supplier', '')
         context['all_finishes'] = Accessory.objects.values_list('finish', flat=True).distinct().exclude(finish__isnull=True).exclude(finish__exact='')
-        context['all_suppliers'] = Accessory.objects.values_list('supplier', flat=True).distinct().exclude(supplier__isnull=True).exclude(supplier__exact='')
+        context['all_suppliers'] = Accessory.objects.values_list('supplier', flat=True).distinct().exclude(supplier__isnull=True)
         return context
 
 class AccessoryCreateView(PermissionRequiredMixin, CreateView):
