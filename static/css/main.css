@@ -27,56 +27,32 @@ body {
   min-height: 100vh;
 }
 
-/* Enhanced sidebar */
-.sidebar {
-  background: linear-gradient(180deg, var(--primary-color) 0%, #34495e 100%);
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-  transition: var(--transition);
-  z-index: 1000;
+/* Top Navigation Bar */
+.navbar {
+  box-shadow: var(--box-shadow);
 }
 
-.sidebar h4 {
-  background: rgba(255,255,255,0.1);
-  margin: 0;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-weight: 600;
+.navbar-brand {
+    font-weight: 600;
 }
 
-.sidebar .nav-link {
-  position: relative;
-  margin: 0.25rem 0.5rem;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  font-weight: 500;
+.navbar .nav-link {
+    font-weight: 500;
+    transition: var(--transition);
 }
 
-.sidebar .nav-link:hover {
-  background: rgba(255,255,255,0.1);
-  transform: translateX(5px);
+.navbar .nav-link:hover {
+    color: var(--light-color);
 }
 
-.sidebar .nav-link.active {
-  background: var(--secondary-color);
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+.navbar .dropdown-menu {
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: none;
 }
 
-.sidebar .nav-link::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3px;
-  height: 0;
-  background: var(--secondary-color);
-  transition: var(--transition);
-}
-
-.sidebar .nav-link:hover::before,
-.sidebar .nav-link.active::before {
-  height: 100%;
+.main-content {
+    padding-top: 2rem;
 }
 
 /* Enhanced cards */
@@ -1131,3 +1107,38 @@ body {
 }
 
 /* End of enhanced styles */
+
+/* Sidebar dropdown toggle */
+.sidebar .nav-link[data-bs-toggle="collapse"]::after {
+  content: '\f282'; /* Bootstrap Icon for chevron down */
+  font-family: 'bootstrap-icons';
+  font-weight: bold;
+  display: inline-block;
+  transition: transform 0.3s ease;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.sidebar .nav-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.sidebar .collapse .nav-link {
+  font-size: 0.9rem;
+  padding-left: 2.5rem; /* Indent sub-menu items */
+  position: relative;
+}
+
+.sidebar .collapse .nav-link::before {
+    content: '';
+    position: absolute;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+}

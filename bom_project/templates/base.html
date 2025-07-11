@@ -38,101 +38,80 @@
         <i class="bi bi-moon-fill"></i>
     </button>
     
-    <!-- Navigation Sidebar -->
-    <nav class="sidebar" role="navigation" aria-label="Main navigation">
-        <div class="sidebar-header">
-            <div class="sidebar-brand">
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">
                 <i class="bi bi-gear-fill"></i>
-                <span>BOM System</span>
-            </div>
-        </div>
-        
-        <div class="sidebar-content">
-            <ul class="nav flex-column sidebar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'dashboard:dashboard' %}" data-nav-link>
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'masters:fabric_list' %}" data-nav-link>
-                        <i class="bi bi-scissors"></i>
-                        <span>Fabrics</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'masters:accessory_list' %}" data-nav-link>
-                        <i class="bi bi-gem"></i>
-                        <span>Accessories</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'styles:style_list' %}" data-nav-link>
-                        <i class="bi bi-palette"></i>
-                        <span>Styles</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'orders:order_list' %}" data-nav-link>
-                        <i class="bi bi-cart"></i>
-                        <span>Orders</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'purchase:fabric_po_list' %}" data-nav-link>
-                        <i class="bi bi-receipt"></i>
-                        <span>Purchase Orders</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'purchase:fabric_receipt_list' %}" data-nav-link>
-                        <i class="bi bi-inbox"></i>
-                        <span>Purchase Receipts</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'reports:bom_report' %}" data-nav-link>
-                        <i class="bi bi-graph-up"></i>
-                        <span>Reports</span>
-                    </a>
-                </li>
-            </ul>
-            
-            <hr class="sidebar-divider">
-            
-            <ul class="nav flex-column sidebar-nav">
-                {% if user.is_authenticated %}
+                BOM System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'admin:index' %}" data-nav-link>
-                            <i class="bi bi-gear"></i>
-                            <span>Admin</span>
-                        </a>
+                        <a class="nav-link" href="{% url 'dashboard:dashboard' %}">Dashboard</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="document.getElementById('logout-form').submit();" data-nav-link>
-                            <i class="bi bi-box-arrow-right"></i>
-                            <span>Logout</span>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="mastersDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Masters
                         </a>
-                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                            {% csrf_token %}
-                        </form>
+                        <ul class="dropdown-menu" aria-labelledby="mastersDropdown">
+                            <li><a class="dropdown-item" href="{% url 'masters:fabric_list' %}">Fabrics</a></li>
+                            <li><a class="dropdown-item" href="{% url 'masters:accessory_list' %}">Accessories</a></li>
+                        </ul>
                     </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}" data-nav-link>
-                            <i class="bi bi-box-arrow-in-right"></i>
-                            <span>Login</span>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="transactionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Transactions
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="transactionsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'styles:style_list' %}">Styles</a></li>
+                            <li><a class="dropdown-item" href="{% url 'orders:order_list' %}">Orders</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'purchase:fabric_po_list' %}">Purchase Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'purchase:fabric_receipt_list' %}">Purchase Receipts</a></li>
+                        </ul>
                     </li>
-                {% endif %}
-            </ul>
-        </div>
-        
-        <div class="sidebar-footer">
-            <div class="user-info">
-                <i class="bi bi-person-circle"></i>
-                <span>{{ user.username|default:'Guest' }}</span>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Reports
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="reportsDropdown">
+                            <li><a class="dropdown-item" href="{% url 'reports:bom_report' %}">BOM Report</a></li>
+                            <li><a class="dropdown-item" href="{% url 'reports:style_costing_report' %}">Costing Report</a></li>
+                            <li><a class="dropdown-item" href="{% url 'reports:purchase_order_report' %}">PO Report</a></li>
+                            <li><a class="dropdown-item" href="{% url 'reports:purchase_receipt_report' %}">Receipt Report</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
+                                        Logout
+                                    </a>
+                                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                        {% csrf_token %}
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </nav>
@@ -155,7 +134,7 @@
             <!-- Page Header -->
             <div class="page-header">
                 <div class="page-title">
-                    <h1>{% block page_title %}{% block title %}BOM Management System{% endblock %}{% endblock %}</h1>
+                    <h1>{% block page_title %}BOM Management System{% endblock %}</h1>
                     {% block page_description %}
                     {% endblock %}
                 </div>
