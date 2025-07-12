@@ -349,6 +349,10 @@ a:focus {
   transition: var(--transition-all);
 }
 
+.main-content-full-width {
+    margin-left: 0;
+}
+
 .content-header {
   background: var(--bg-secondary);
   padding: var(--space-8) var(--space-6);
@@ -504,7 +508,7 @@ a:focus {
 
 .btn-outline-primary {
   background: transparent;
-  color: var.primary-600;
+  color: var(--primary-600);
   border-color: var(--primary-600);
 }
 
