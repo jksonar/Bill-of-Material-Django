@@ -27,7 +27,7 @@
 </head>
 <body data-theme="light">
     <!-- Skip to main content for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <!-- <a href="#main-content" class="skip-link">Skip to main content</a> -->
     
     <!-- Mobile menu toggle -->
     <button class="mobile-menu-toggle d-md-none" data-mobile-menu-toggle aria-label="Toggle navigation menu">
@@ -35,16 +35,15 @@
     </button>
     
     <!-- Theme toggle -->
-    <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+    <!-- <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
         <i class="bi bi-moon-fill"></i>
-    </button>
+    </button> -->
     
     <!-- Top Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">
-                <i class="bi bi-gear-fill"></i>
-                BOM System
+                <div class="brand-icon">BOM System</div>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -120,6 +119,81 @@
     <!-- Sidebar overlay for mobile -->
     <div class="sidebar-overlay d-md-none"></div>
 
+    <!-- Sidebar -->
+    <aside class="sidebar d-md-block" id="sidebar">
+        <div class="sidebar-brand">
+            <h1>
+                <div class="brand-icon">B</div>
+                BOM System
+            </h1>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="sidebar-nav">
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'dashboard:dashboard' %}" data-nav-link>
+                        <i class="bi bi-speedometer2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'masters:fabric_list' %}" data-nav-link>
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        Fabrics
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'masters:accessory_list' %}" data-nav-link>
+                        <i class="bi bi-puzzle"></i>
+                        Accessories
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'styles:style_list' %}" data-nav-link>
+                        <i class="bi bi-palette"></i>
+                        Styles
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'orders:order_list' %}" data-nav-link>
+                        <i class="bi bi-cart3"></i>
+                        Orders
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'purchase:fabric_po_list' %}" data-nav-link>
+                        <i class="bi bi-receipt"></i>
+                        Purchase Orders
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'purchase:fabric_receipt_list' %}" data-nav-link>
+                        <i class="bi bi-inbox"></i>
+                        Purchase Receipts
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{% url 'reports:bom_report' %}" data-nav-link>
+                        <i class="bi bi-file-earmark-text"></i>
+                        Reports
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-user">
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-avatar">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+                <div class="sidebar-user-details">
+                    <div class="sidebar-user-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="sidebar-user-role">{{ user.groups.first.name|default:"User" }}</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
     <!-- Main Content -->
     <main class="main-content" id="main-content" role="main">
         <div class="content-wrapper">
@@ -133,15 +207,18 @@
             </nav>
             
             <!-- Page Header -->
-            <div class="page-header">
-                <div class="page-title">
-                    <h1>{% block page_title %}BOM Management System{% endblock %}</h1>
-                    {% block page_description %}
-                    {% endblock %}
-                </div>
-                <div class="page-actions">
-                    {% block page_actions %}
-                    {% endblock %}
+            <div class="content-header">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h1 class="page-title">{% block page_title %}BOM Management System{% endblock %}</h1>
+                        {% block page_description %}
+                        <p class="page-description">Manage your Bill of Materials efficiently</p>
+                        {% endblock %}
+                    </div>
+                    <div class="page-actions">
+                        {% block page_actions %}
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
             

@@ -2,10 +2,10 @@
 
 {% block title %}Fabric Management{% endblock %}
 
-{% block page_title %}Fabric Management{% endblock %}
+{% block page_title %}Fabric Inventory{% endblock %}
 
 {% block page_description %}
-<p class="text-muted mb-0">Manage fabric inventory, specifications, and supplier information</p>
+<p class="page-description">Manage fabric materials and specifications for your production needs</p>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -15,80 +15,84 @@
 {% endblock %}
 
 {% block page_actions %}
-{% if perms.masters.add_fabric %}
-<button class="btn btn-primary btn-lg" 
+<button class="btn btn-primary" 
         hx-get="{% url 'masters:fabric_create' %}" 
-        hx-target="#modal-container .modal-content" 
-        hx-trigger="click" 
-        data-bs-toggle="modal" 
-        data-bs-target="#modal-container"
-        data-loading-text="Loading..."
-        aria-label="Add new fabric">
-    <i class="bi bi-plus-circle me-2"></i>
+        hx-target="#modal-container" 
+        hx-swap="innerHTML"
+        data-bs-toggle="tooltip" 
+        title="Add new fabric to inventory">
+    <i class="bi bi-plus-lg"></i>
     Add New Fabric
 </button>
-{% endif %}
 {% endblock %}
 
 {% block content %}
 <div class="fabric-management-container">
-    <!-- Quick Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stats-card card border-0 shadow-sm h-100">
-                <div class="card-body">
+    <!-- Quick Stats Overview -->
+    <div class="row g-4 mb-6">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 bg-gradient">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center">
-                        <div class="stats-icon bg-primary bg-opacity-10 text-primary rounded-circle p-3 me-3">
-                            <i class="bi bi-scissors fs-4"></i>
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-grid-3x3-gap text-primary fs-4"></i>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Total Fabrics</h6>
-                            <h3 class="mb-0">{{ total_fabrics|default:"0" }}</h3>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-0 fw-bold text-dark">{{ fabrics.count }}</h3>
+                            <p class="text-muted mb-0 small">Total Fabrics</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stats-card card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 bg-gradient">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center">
-                        <div class="stats-icon bg-success bg-opacity-10 text-success rounded-circle p-3 me-3">
-                            <i class="bi bi-check-circle fs-4"></i>
+                        <div class="flex-shrink-0">
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-check-circle text-success fs-4"></i>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Active Fabrics</h6>
-                            <h3 class="mb-0">{{ active_fabrics|default:"0" }}</h3>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-0 fw-bold text-dark">{{ fabrics.count }}</h3>
+                            <p class="text-muted mb-0 small">Active Fabrics</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stats-card card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 bg-gradient">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center">
-                        <div class="stats-icon bg-info bg-opacity-10 text-info rounded-circle p-3 me-3">
-                            <i class="bi bi-building fs-4"></i>
+                        <div class="flex-shrink-0">
+                            <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-building text-info fs-4"></i>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Suppliers</h6>
-                            <h3 class="mb-0">{{ total_suppliers|default:"0" }}</h3>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-0 fw-bold text-dark">{{ suppliers_count|default:0 }}</h3>
+                            <p class="text-muted mb-0 small">Suppliers</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-3">
-            <div class="stats-card card border-0 shadow-sm h-100">
-                <div class="card-body">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border-0 bg-gradient">
+                <div class="card-body p-4">
                     <div class="d-flex align-items-center">
-                        <div class="stats-icon bg-warning bg-opacity-10 text-warning rounded-circle p-3 me-3">
-                            <i class="bi bi-palette fs-4"></i>
+                        <div class="flex-shrink-0">
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-layers text-warning fs-4"></i>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Constructions</h6>
-                            <h3 class="mb-0">{{ total_constructions|default:"0" }}</h3>
+                        <div class="flex-grow-1 ms-3">
+                            <h3 class="mb-0 fw-bold text-dark">{{ constructions_count|default:0 }}</h3>
+                            <p class="text-muted mb-0 small">Constructions</p>
                         </div>
                     </div>
                 </div>
@@ -97,20 +101,22 @@
     </div>
 
     <!-- Main Content Card -->
-    <div class="card border-0 shadow-sm" hx-target="#main-content" hx-push-url="true">
-        <div class="card-header bg-white border-bottom">
+    <div class="card">
+        <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-0">Fabric Inventory</h5>
+                    <h5 class="mb-0">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>
+                        Fabric Inventory
+                    </h5>
                     <small class="text-muted">Manage your fabric collection</small>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    <div class="btn-group" role="group" aria-label="View options">
-                        <button type="button" class="btn btn-outline-secondary btn-sm active" data-view="grid" aria-label="Grid view">
-                            <i class="bi bi-grid-3x3-gap"></i>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary active" data-view="grid">
+                            <i class="bi bi-grid"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-view="list" aria-label="List view">
+                        <button type="button" class="btn btn-outline-secondary" data-view="list">
                             <i class="bi bi-list"></i>
                         </button>
                     </div>
@@ -118,177 +124,90 @@
             </div>
         </div>
         <div class="card-body">
-            <!-- Enhanced Search and Filter Section -->
-            <div class="search-filter-section mb-4">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="search-filter-card bg-light rounded p-4">
-                            <form hx-get="{% url 'masters:fabric_list' %}" 
-                                  hx-target="#fabric-list-container" 
-                                  hx-indicator=".htmx-indicator" 
-                                  hx-trigger="input delay:500ms from:input[type=search], change from:select, submit"
-                                  data-validate
-                                  class="search-form">
-                                
-                                <div class="row g-3">
-                                    <!-- Search Input -->
-                                    <div class="col-lg-4 col-md-6">
-                                        <div class="form-floating">
-                                            <input type="search" 
-                                                   name="q" 
-                                                   id="searchQuery" 
-                                                   class="form-control form-control-lg" 
-                                                   placeholder="Search by name, code, or supplier..." 
-                                                   value="{{ query }}"
-                                                   data-search
-                                                   autocomplete="off"
-                                                   aria-describedby="searchHelp">
-                                            <label for="searchQuery">Search Fabrics</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Construction Filter -->
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-floating">
-                                            <select name="construction" 
-                                                    id="constructionFilter" 
-                                                    class="form-select form-select-lg"
-                                                    aria-describedby="constructionHelp">
-                                                <option value="">All Constructions</option>
-                                                {% for construction in all_constructions %}
-                                                    <option value="{{ construction }}" 
-                                                            {% if construction == selected_construction %}selected{% endif %}>
-                                                        {{ construction }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="constructionFilter">Construction</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Supplier Filter -->
-                                    <div class="col-lg-3 col-md-6">
-                                        <div class="form-floating">
-                                            <select name="supplier" 
-                                                    id="supplierFilter" 
-                                                    class="form-select form-select-lg"
-                                                    aria-describedby="supplierHelp">
-                                                <option value="">All Suppliers</option>
-                                                {% for supplier in all_suppliers %}
-                                                    <option value="{{ supplier }}" 
-                                                            {% if supplier == selected_supplier %}selected{% endif %}>
-                                                        {{ supplier }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="supplierFilter">Supplier</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="col-lg-2 col-md-6 d-flex align-items-end">
-                                        <div class="d-flex flex-column gap-2 w-100">
-                                            <button type="submit" 
-                                                    class="btn btn-primary btn-lg w-100"
-                                                    data-loading-text="Filtering..."
-                                                    aria-label="Apply filters">
-                                                <i class="bi bi-funnel me-2"></i>
-                                                Filter
-                                            </button>
-                                            <a href="{% url 'masters:fabric_list' %}" 
-                                               class="btn btn-outline-secondary w-100" 
-                                               hx-get="{% url 'masters:fabric_list' %}" 
-                                               hx-target="#main-content"
-                                               data-loading-text="Clearing..."
-                                               aria-label="Clear all filters">
-                                                <i class="bi bi-arrow-clockwise me-2"></i>
-                                                Clear
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Active Filters Display -->
-                                {% if query or selected_construction or selected_supplier %}
-                                <div class="active-filters mt-3 pt-3 border-top">
-                                    <div class="d-flex align-items-center flex-wrap gap-2">
-                                        <span class="text-muted fw-semibold">Active filters:</span>
-                                        {% if query %}
-                                        <span class="badge bg-primary rounded-pill">
-                                            Search: "{{ query }}"
-                                            <a href="{% url 'masters:fabric_list' %}?construction={{ selected_construction }}&supplier={{ selected_supplier }}" 
-                                               class="text-white ms-1" 
-                                               aria-label="Remove search filter">
-                                                <i class="bi bi-x"></i>
-                                            </a>
-                                        </span>
-                                        {% endif %}
-                                        {% if selected_construction %}
-                                        <span class="badge bg-info rounded-pill">
-                                            Construction: {{ selected_construction }}
-                                            <a href="{% url 'masters:fabric_list' %}?q={{ query }}&supplier={{ selected_supplier }}" 
-                                               class="text-white ms-1" 
-                                               aria-label="Remove construction filter">
-                                                <i class="bi bi-x"></i>
-                                            </a>
-                                        </span>
-                                        {% endif %}
-                                        {% if selected_supplier %}
-                                        <span class="badge bg-success rounded-pill">
-                                            Supplier: {{ selected_supplier }}
-                                            <a href="{% url 'masters:fabric_list' %}?q={{ query }}&construction={{ selected_construction }}" 
-                                               class="text-white ms-1" 
-                                               aria-label="Remove supplier filter">
-                                                <i class="bi bi-x"></i>
-                                            </a>
-                                        </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </form>
+            <!-- Search and Filter Section -->
+            <div class="mb-4">
+                <form method="get" hx-get="{% url 'masters:fabric_list' %}" hx-target="#fabric-list-container" hx-trigger="input changed delay:300ms from:input, change from:select">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-5">
+                            <div class="position-relative">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" 
+                                       class="form-control ps-5" 
+                                       name="q" 
+                                       value="{{ request.GET.q }}" 
+                                       placeholder="Search fabrics by name, code, or description...">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="construction">
+                                <option value="">All Constructions</option>
+                                {% for construction in constructions %}
+                                <option value="{{ construction }}" {% if request.GET.construction == construction %}selected{% endif %}>
+                                    {{ construction }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" name="supplier">
+                                <option value="">All Suppliers</option>
+                                {% for supplier in suppliers %}
+                                <option value="{{ supplier.id }}" {% if request.GET.supplier == supplier.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ supplier.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <a href="{% url 'masters:fabric_list' %}" class="btn btn-outline-secondary w-100" title="Clear filters">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </a>
                         </div>
                     </div>
+                </form>
+                                
+                
+                <!-- Active Filters -->
+                {% if request.GET.q or request.GET.construction or request.GET.supplier %}
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <small class="text-muted">Active filters:</small>
+                    {% if request.GET.q %}
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                        "{{ request.GET.q }}"
+                    </span>
+                    {% endif %}
+                    {% if request.GET.construction %}
+                    <span class="badge bg-info-subtle text-info border border-info-subtle">
+                        {{ request.GET.construction }}
+                    </span>
+                    {% endif %}
+                    {% if request.GET.supplier %}
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                        Supplier filter
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Results Header -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <span class="text-muted">{{ fabrics.count }} fabric{{ fabrics.count|pluralize }} found</span>
+                </div>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-secondary" title="Export to Excel">
+                        <i class="bi bi-file-earmark-excel"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" title="Export to PDF">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </button>
                 </div>
             </div>
-
-            <!-- Results Section -->
-            <div class="results-section">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="results-info">
-                        <span class="text-muted">Showing results</span>
-                        {% if query or selected_construction or selected_supplier %}
-                        <span class="badge bg-secondary ms-2">Filtered</span>
-                        {% endif %}
-                    </div>
-                    <div class="results-actions">
-                        <div class="btn-group btn-group-sm" role="group" aria-label="Export options">
-                            <button type="button" class="btn btn-outline-secondary" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="Export to Excel">
-                                <i class="bi bi-file-earmark-excel"></i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="Export to PDF">
-                                <i class="bi bi-file-earmark-pdf"></i>
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary" 
-                                    data-bs-toggle="tooltip" 
-                                    data-bs-placement="top" 
-                                    title="Print">
-                                <i class="bi bi-printer"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Fabric List Container -->
-                <div id="fabric-list-container" class="animate-on-scroll">
-                    {% include 'masters/partials/fabric_list_partial.html' %}
-                </div>
+            
+            <!-- Fabric List -->
+            <div id="fabric-list-container">
+                {% include 'masters/partials/fabric_list_partial.html' %}
             </div>
         </div>
     </div>
@@ -297,7 +216,7 @@
 <!-- Enhanced JavaScript for this page -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // View toggle functionality
+    // Modern view toggle with smooth transitions
     const viewButtons = document.querySelectorAll('[data-view]');
     const fabricContainer = document.getElementById('fabric-list-container');
     
@@ -305,14 +224,26 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function() {
             const view = this.getAttribute('data-view');
             
-            // Update active button
-            viewButtons.forEach(btn => btn.classList.remove('active'));
+            // Update active button with animation
+            viewButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.transform = 'scale(1)';
+            });
             this.classList.add('active');
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => this.style.transform = 'scale(1)', 150);
             
-            // Update container class
+            // Animate container transition
             if (fabricContainer) {
-                fabricContainer.className = fabricContainer.className.replace(/view-\w+/g, '');
-                fabricContainer.classList.add(`view-${view}`);
+                fabricContainer.style.opacity = '0.7';
+                fabricContainer.style.transform = 'translateY(10px)';
+                
+                setTimeout(() => {
+                    fabricContainer.className = fabricContainer.className.replace(/view-\w+/g, '');
+                    fabricContainer.classList.add(`view-${view}`);
+                    fabricContainer.style.opacity = '1';
+                    fabricContainer.style.transform = 'translateY(0)';
+                }, 200);
             }
             
             // Store preference
@@ -321,33 +252,129 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Restore view preference
-    const savedView = localStorage.getItem('fabric-view-preference');
-    if (savedView) {
-        const button = document.querySelector(`[data-view="${savedView}"]`);
-        if (button) {
-            button.click();
-        }
+    const savedView = localStorage.getItem('fabric-view-preference') || 'grid';
+    const savedButton = document.querySelector(`[data-view="${savedView}"]`);
+    if (savedButton && !savedButton.classList.contains('active')) {
+        savedButton.click();
     }
     
-    // Enhanced search functionality
-    const searchInput = document.getElementById('searchQuery');
+    // Enhanced search with real-time feedback
+    const searchInput = document.querySelector('input[name="q"]');
     if (searchInput) {
-        // Add search suggestions (if you have an endpoint for this)
+        let searchTimeout;
+        
         searchInput.addEventListener('input', function() {
             const query = this.value;
-            if (query.length >= 2) {
-                // You can implement search suggestions here
-                console.log('Search query:', query);
+            
+            // Add visual feedback
+            this.style.borderColor = query.length > 0 ? 'var(--bs-primary)' : '';
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            // Show loading state for longer queries
+            if (query.length >= 3) {
+                const loadingIcon = this.parentElement.querySelector('.bi-search');
+                if (loadingIcon) {
+                    loadingIcon.className = 'bi bi-arrow-clockwise position-absolute top-50 start-0 translate-middle-y ms-3 text-muted';
+                    loadingIcon.style.animation = 'spin 1s linear infinite';
+                    
+                    searchTimeout = setTimeout(() => {
+                        loadingIcon.className = 'bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted';
+                        loadingIcon.style.animation = '';
+                    }, 1000);
+                }
             }
+        });
+        
+        // Add focus effects
+        searchInput.addEventListener('focus', function() {
+            this.parentElement.style.boxShadow = '0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25)';
+        });
+        
+        searchInput.addEventListener('blur', function() {
+            this.parentElement.style.boxShadow = '';
+            this.style.borderColor = '';
         });
     }
     
-    // Stats cards animation
-    const statsCards = document.querySelectorAll('.stats-card');
+    // Animate stats cards with stagger effect
+    const statsCards = document.querySelectorAll('.card');
     statsCards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-        card.classList.add('fade-in-up');
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 150);
+        
+        // Add hover effects
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
+    
+    // Add smooth scrolling for better UX
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Add loading states for export buttons
+    document.querySelectorAll('.btn-group .btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.querySelector('i')) {
+                const icon = this.querySelector('i');
+                const originalClass = icon.className;
+                icon.className = 'bi bi-arrow-clockwise';
+                icon.style.animation = 'spin 1s linear infinite';
+                
+                setTimeout(() => {
+                    icon.className = originalClass;
+                    icon.style.animation = '';
+                }, 2000);
+            }
+        });
     });
 });
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .btn {
+        transition: all 0.2s ease !important;
+    }
+    
+    .form-control:focus {
+        border-color: var(--bs-primary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
+    }
+`;
+document.head.appendChild(style);
 </script>
 {% endblock %}
