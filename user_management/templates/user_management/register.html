@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block title %}Register - BOM Management System{% endblock %}
+
+{% block page_title %}Create an Account{% endblock %}
+
+{% block page_description %}Join the BOM Management System to manage your materials and products efficiently.{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            {{ field.label_tag }}
+                            {{ field|add_class:"form-control" }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <small>Already have an account? <a href="{% url 'user_management:login' %}">Log in</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

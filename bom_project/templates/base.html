@@ -95,13 +95,15 @@
                                 {{ user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'user_management:profile' %}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'user_management:password_change' %}">Change Password</a></li>
                                 <li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">
                                         Logout
                                     </a>
-                                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                    <form id="logout-form" action="{% url 'user_management:logout' %}" method="post" style="display: none;">
                                         {% csrf_token %}
                                     </form>
                                 </li>
@@ -109,7 +111,10 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            <a class="nav-link" href="{% url 'user_management:login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_management:register' %}">Register</a>
                         </li>
                     {% endif %}
                 </ul>
